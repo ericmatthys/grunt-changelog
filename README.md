@@ -1,6 +1,6 @@
 # grunt-changelog
 
-> 
+>
 
 ## Getting Started
 This plugin requires Grunt `~0.4.0`
@@ -24,62 +24,146 @@ In your project's Gruntfile, add a section named `changelog` to the data object 
 
 ```js
 grunt.initConfig({
-  changelog: {
-    options: {
-      // Task-specific options go here.
-    },
-    your_target: {
-      // Target-specific file lists and/or options go here.
-    },
-  },
+	changelog: {
+		options: {
+			// Task-specific options go here.
+		}
+	},
 })
 ```
 
 ### Options
 
-#### options.separator
+#### options.after
 Type: `String`
-Default value: `',  '`
+Default value: `7 days ago`
 
-A string value that is used to do something with whatever.
+An ISO-8601 date string that the git log will start at.
 
-#### options.punctuation
+#### options.before
 Type: `String`
-Default value: `'.'`
+Default value: `now`
 
-A string value that is used to do something else with whatever else.
+An ISO-8601 date string that the git log will end at.
+
+#### options.featureRegex
+Type: `RegEx`
+Default value: `/^(.*)closes #\d+:?(.*)$/gim`
+
+The regular expression used to match feature changes.
+
+#### options.fixRegex
+Type: `RegEx`
+Default value: `/^(.*)fixes #\d+:?(.*)$/gim`
+
+The regular expression used to match bug fix changes.
+
+#### options.file
+Type: `String`
+Default value: `undefined`
+
+The log file to parse for changes. If nothing is set, a git log command will be run.
+
+#### options.dest
+Type: `String`
+Default value: `changelog`
+
+The filepath to write the changelog to.
+
+#### options.templates.main
+Type: `String`
+Default value: `NEW:\n\n{{features}}\nFIXES:\n\n{{fixes}}`
+
+The main template used for creating the changelog.
+
+#### options.templates.change
+Type: `String`
+Default value: `  - {{change}}\n`
+
+The template used for creating each individual change.
+
+#### options.templates.empty
+Type: `String`
+Default value: `  (none)\n`
+
+The template used when no changes were found.
 
 ### Usage Examples
 
 #### Default Options
-In this example, the default options are used to do something with whatever. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result would be `Testing, 1 2 3.`
+In this example, the default options are used to create the changelog. A git log command will run for logs starting 7 days ago until now and the changelog will be generated matching commit messages with fixes and closes.
 
 ```js
 grunt.initConfig({
-  changelog: {
-    options: {},
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
-  },
+	changelog: {
+		options: {}
+	},
 })
 ```
 
-#### Custom Options
-In this example, custom options are used to do something else with whatever else. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result in this case would be `Testing: 1 2 3 !!!`
+```
+NEW:
+
+  - Feature 1
+  - Feature 2
+  - Feature 3
+
+FIXES:
+
+  - Fix 1
+  - Fix 2
+```
+
+#### Custom Range
+In this example, a custom date range is used to only show changes between March 1st and March 14th.
 
 ```js
 grunt.initConfig({
-  changelog: {
-    options: {
-      separator: ': ',
-      punctuation: ' !!!',
-    },
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
-  },
+	changelog: {
+		options: {
+			after: '2013-03-01',
+			before: '2013-03-14'
+		}
+	},
 })
+```
+
+#### Custom Destination
+In this example, a custom destination is used to write the changelog to a different location.
+
+```js
+grunt.initConfig({
+	changelog: {
+		options: {
+			dest: 'release-notes/1.0.0.txt'
+		}
+	},
+})
+```
+
+#### Custom Formatting
+In this example, custom formatting is used to create a simple changelog with the list of features and fixes.
+
+```js
+grunt.initConfig({
+	changelog: {
+		options: {
+			templates: {
+				main: '{{features}}{{fixes}}',
+				change: '  - {{change}}\n',
+				empty: '\n'
+			}
+		}
+	},
+})
+```
+
+```
+  - Feature 1
+  - Feature 2
+  - Feature 3
+  - Fix 1
+  - Fix 2
 ```
 
 ## Contributing
