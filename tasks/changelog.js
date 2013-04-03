@@ -15,8 +15,6 @@ module.exports = function (grunt) {
 	grunt.registerMultiTask('changelog', 'Generate a changelog based on commit messages.', function () {
 		// Merge task-specific and/or target-specific options with these defaults.
 		var options = this.options({
-			after: moment().subtract('days', 7).format(),
-			before: moment().format(),
 			featureRegex: /^(.*)closes #\d+:?(.*)$/gim,
 			fixRegex: /^(.*)fixes #\d+:?(.*)$/gim,
 			dest: 'changelog.txt',
