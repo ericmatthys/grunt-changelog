@@ -79,7 +79,13 @@ module.exports = function (grunt) {
 
 		// If a log is passed in as an option, don't run the git log command
 		// and just use the explicit log instead.
-		if (options.log && grunt.file.exists(options.log)) {
+		if (options.log) {
+			// Check to make sure that the log exists before going any further.
+			if (!grunt.file.exists(options.log)) {
+				grunt.fatal('This log file does not exist.');
+				return false;
+			}
+
 			var result = grunt.file.read(options.log);
 			var changelog = getChangelog(result);
 
