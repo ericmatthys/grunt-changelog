@@ -20,8 +20,8 @@ module.exports = function (grunt) {
 		var options = this.options({
 			after: moment().subtract('days', 7).format(),
 			before: moment().format(),
-			featureRegex: /[,|\s]*closes #\d+[:|\s]*([^\n]+)*/gi,
-			bugRegex: /[,|\s]*fixes #\d+[:|\s]*([^\n]+)*/gi,
+			featureRegex: /^(.*)closes #\d+(.*)$/gim,
+			bugRegex: /^(.*)fixes #\d+(.*)$/gim,
 			dest: 'changelog.txt'
 		});
 
@@ -50,8 +50,10 @@ module.exports = function (grunt) {
 				var match;
 
 				function writeChanges(regex) {
+					grunt.log.writeln(regex);
+
 					while ((match = regex.exec(result))) {
-						grunt.log.ok('Change detected.');
+						grunt.log.writeln(match);
 
 						var change = '';
 
