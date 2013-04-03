@@ -23,7 +23,7 @@ var grunt = require('grunt');
 */
 
 exports.changelog = {
-	default: function (test) {
+	default_options: function (test) {
 		test.expect(1);
 
 		var actual = grunt.file.read('tmp/changelog_default');
@@ -33,7 +33,7 @@ exports.changelog = {
 		test.done();
 	},
 
-	formatting: function (test) {
+	formatting_options: function (test) {
 		test.expect(1);
 
 		var actual = grunt.file.read('tmp/changelog_formatting');
@@ -43,7 +43,7 @@ exports.changelog = {
 		test.done();
 	},
 
-	regex: function (test) {
+	regex_options: function (test) {
 		test.expect(1);
 
 		var actual = grunt.file.read('tmp/changelog_regex');
