@@ -12,7 +12,7 @@ module.exports = function (grunt) {
 
 	var moment = require('moment');
 
-	grunt.registerMultiTask('changelog', 'Generate a changelog based on Git commit messages.', function () {
+	grunt.registerMultiTask('changelog', 'Generate a changelog based on commit messages.', function () {
 		// Merge task-specific and/or target-specific options with these defaults.
 		var options = this.options({
 			after: moment().subtract('days', 7).format(),

@@ -1,6 +1,6 @@
 {
 	"name": "grunt-changelog",
-	"description": "Generate a changelog based on Git commit messages.",
+	"description": "Generate a changelog based on commit messages.",
 	"version": "0.1.0",
 	"homepage": "https://github.com/ericmatthys/grunt-changelog",
 	"author": {
@@ -40,6 +40,9 @@
 		"grunt": "~0.4.0"
 	},
 	"keywords": [
-		"gruntplugin"
+		"gruntplugin",
+		"grunt",
+		"changelog",
+		"release notes"
 	]
 }
