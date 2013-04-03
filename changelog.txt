@@ -1,8 +1,0 @@
-NEW:
-
-  - sample message.
-
-FIXES:
-
-  - testing five
-  - testing 1 2 3,

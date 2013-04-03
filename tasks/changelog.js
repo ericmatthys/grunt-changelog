@@ -12,7 +12,7 @@ module.exports = function (grunt) {
 
 	var moment = require('moment');
 
-	grunt.registerMultiTask('changelog', 'Creates a list of changes based on a git log.', function () {
+	grunt.registerMultiTask('changelog', 'Generate a changelog based on Git commit messages.', function () {
 		// Merge task-specific and/or target-specific options with these defaults.
 		var options = this.options({
 			after: moment().subtract('days', 7).format(),
@@ -28,6 +28,60 @@ module.exports = function (grunt) {
 		});
 
 		grunt.verbose.writeflags(options, 'Options');
+
+		// Loop through each match and build the string of changes that will
+		// replace part of the main template.
+		function getChanges(log, regex) {
+			var changes = '';
+			var match;
+
+
+			while ((match = regex.exec(log))) {
+				var change = '';
+
+				for (var i = 1, len = match.length; i < len; i++) {
+					change += match[i];
+				}
+
+				changes += options.templates.change.replace('{{change}}', change.trim());
+			}
+
+			if (changes)
+				return changes;
+			else
+				return options.templates.empty;
+		}
+
+		// Generate the changelog using the templates defined in options.
+		function getChangelog(log) {
+			var output = options.templates.main;
+
+			output = output.replace('{{features}}', getChanges(log, options.featureRegex));
+			output = output.replace('{{fixes}}', getChanges(log, options.fixRegex));
+
+			return output;
+		}
+
+		// Write the changelog to the destination file.
+		function writeChangelog(changelog) {
+			grunt.file.write(options.dest, changelog);
+
+			// Log the results.
+			grunt.log.ok(changelog);
+			grunt.log.writeln();
+			grunt.log.writeln('Changelog created at '+ options.dest.toString().cyan + '.');
+		}
+
+		// If a file is passed in as an option, don't run the git log command
+		// and just use the file instead.
+		if (options.file) {
+			var result = grunt.file.read(options.file);
+			var changelog = getChangelog(result);
+
+			writeChangelog(changelog);
+
+			return;
+		}
 
 		var done = this.async();
 
@@ -51,40 +105,9 @@ module.exports = function (grunt) {
 					return done(false);
 				}
 
-				var output = options.templates.main;
+				var changelog = getChangelog(result);
 
-				function getChanges(regex) {
-					var changes = '';
-					var match;
-
-					// Loop through each match and build the string that will
-					// replace part of the  main template.
-					while ((match = regex.exec(result))) {
-						var change = '';
-
-						for (var i = 1, len = match.length; i < len; i++) {
-							change += match[i];
-						}
-
-						changes += options.templates.change.replace('{{change}}', change.trim());
-					}
-
-					if (changes)
-						return changes;
-					else
-						return options.templates.empty;
-				}
-
-				output = output.replace('{{features}}', getChanges(options.featureRegex));
-				output = output.replace('{{fixes}}', getChanges(options.fixRegex));
-
-				// Write the output to the destination file.
-				grunt.file.write(options.dest, output);
-
-				// Log the results.
-				grunt.log.ok(output);
-				grunt.log.writeln();
-				grunt.log.ok('Changelog created at '+ options.dest + '.');
+				writeChangelog(result);
 
 				done();
 			}

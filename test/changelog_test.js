@@ -23,26 +23,33 @@ var grunt = require('grunt');
 */
 
 exports.changelog = {
-	setUp: function (done) {
-		// setup here if necessary
-		done();
-	},
-	default_options: function (test) {
-		/*test.expect(1);
+	default: function (test) {
+		test.expect(1);
 
-		var actual = grunt.file.read('tmp/default_options');
-		var expected = grunt.file.read('test/expected/default_options');
-		test.equal(actual, expected, 'should describe what the default behavior is.');*/
+		var actual = grunt.file.read('tmp/changelog_default');
+		var expected = grunt.file.read('test/expected/default');
+		test.equal(actual, expected, 'The changelog should be generated with the default options.');
 
 		test.done();
 	},
-	custom_options: function (test) {
-		/*test.expect(1);
 
-		var actual = grunt.file.read('tmp/custom_options');
-		var expected = grunt.file.read('test/expected/custom_options');
-		test.equal(actual, expected, 'should describe what the custom option(s) behavior is.');*/
+	formatting: function (test) {
+		test.expect(1);
+
+		var actual = grunt.file.read('tmp/changelog_formatting');
+		var expected = grunt.file.read('test/expected/formatting');
+		test.equal(actual, expected, 'The custom templates in options should be used to create the changelog.');
 
 		test.done();
 	},
+
+	regex: function (test) {
+		test.expect(1);
+
+		var actual = grunt.file.read('tmp/changelog_regex');
+		var expected = grunt.file.read('test/expected/regex');
+		test.equal(actual, expected, 'The custom regex in options should be used to match changes in the log.');
+
+		test.done();
+	}
 };

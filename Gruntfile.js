@@ -10,7 +10,6 @@
 
 module.exports = function (grunt) {
 
-	// Project configuration.
 	grunt.initConfig({
 		jshint: {
 			all: [
@@ -23,42 +22,51 @@ module.exports = function (grunt) {
 			},
 		},
 
-		// Before generating any new files, remove any previously-created files.
 		clean: {
 			tests: ['tmp'],
 		},
 
-		// Configuration to be run (and then tested).
 		changelog: {
-			default_options: {},
-			custom_options: {
+			default: {
 				options: {
-					before: '2013-04-01',
-					after: '2013-03-26',
-					dest: 'tmp/changelog.txt'
+					file: 'test/fixtures/log',
+					dest: 'tmp/changelog_default'
 				}
 			},
+			formatting: {
+				options: {
+					file: 'test/fixtures/log',
+					dest: 'tmp/changelog_formatting',
+					templates: {
+						main: '{{fixes}}{{features}}\n',
+						change: '{{change}}',
+						empty: 'none'
+					}
+				}
+			},
+			regex: {
+				options: {
+					file: 'test/fixtures/log',
+					dest: 'tmp/changelog_regex',
+					featureRegex: /^closes #\d+:?(.*)$/gm,
+					fixRegex: /^fixes #\d+:?(.*)$/gm
+				}
+			}
 		},
 
-		// Unit tests.
 		nodeunit: {
 			tests: ['test/*_test.js'],
 		}
 	});
 
-	// Actually load this plugin's task(s).
 	grunt.loadTasks('tasks');
 
-	// These plugins provide necessary tasks.
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-clean');
 	grunt.loadNpmTasks('grunt-contrib-nodeunit');
 
-	// Whenever the "test" task is run, first clean the "tmp" dir, then run this
-	// plugin's task(s), then test the result.
 	grunt.registerTask('test', ['clean', 'changelog', 'nodeunit']);
 
-	// By default, lint and run all tests.
 	grunt.registerTask('default', ['jshint', 'test']);
 
 };
