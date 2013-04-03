@@ -68,7 +68,7 @@ The log file to parse for changes. If nothing is set, a git log command will be 
 Type: `String`
 Default value: `changelog`
 
-The filepath to write the changelog to.
+The file path to write the changelog to.
 
 #### options.templates.main
 Type: `String`
@@ -86,7 +86,7 @@ The template used for creating each individual change.
 Type: `String`
 Default value: `  (none)\n`
 
-The template used when no changes were found.
+The template used when no changes are found.
 
 ### Usage Examples
 
@@ -101,6 +101,7 @@ grunt.initConfig({
 })
 ```
 
+changelog.txt
 ```
 NEW:
 
@@ -148,6 +149,7 @@ In this example, custom formatting is used to create a simple changelog with the
 grunt.initConfig({
 	changelog: {
 		options: {
+			dest: 'release-notes/1.0.0.txt',
 			templates: {
 				main: '{{features}}{{fixes}}',
 				change: '  - {{change}}\n',
@@ -158,6 +160,7 @@ grunt.initConfig({
 })
 ```
 
+release-notes/1.0.0.txt
 ```
   - Feature 1
   - Feature 2
