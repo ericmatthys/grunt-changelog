@@ -20,8 +20,8 @@ module.exports = function (grunt) {
 		var options = this.options({
 			after: moment().subtract('days', 7).format(),
 			before: moment().format(),
-			featureRegex: /([^\n]*)closes #\d+([^\n]+)*/gi,
-			bugRegex: /([^\n]*)closes #\d+([^\n]+)*/gi,
+			featureRegex: /[,|\s]*closes #\d+[:|\s]*([^\n]+)*/gi,
+			bugRegex: /[,|\s]*fixes #\d+[:|\s]*([^\n]+)*/gi,
 			dest: 'changelog.txt'
 		});
 
@@ -49,10 +49,22 @@ module.exports = function (grunt) {
 
 				var match;
 
-				while ((match = options.featureRegex.exec(result))) {
-					grunt.log.ok('match');
-					grunt.log.writeflags(match);
+				function writeChanges(regex) {
+					while ((match = regex.exec(result))) {
+						grunt.log.ok('Change detected.');
+
+						var change = '';
+
+						for (var i = 1, len = match.length; i < len; i++) {
+							change += match[i];
+						}
+
+						grunt.log.ok(change);
+					}
 				}
+
+				writeChanges(options.featureRegex);
+				writeChanges(options.bugRegex);
 
 				grunt.file.write(options.dest, result);
 				grunt.log.ok('Changelog written to '+ options.dest);

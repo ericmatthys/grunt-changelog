@@ -1,2 +1,3 @@
+closes #452: sample message.
 removed sample code from task.
 initial commit
