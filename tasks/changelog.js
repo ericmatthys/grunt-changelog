@@ -20,12 +20,12 @@ module.exports = function (grunt) {
 		var options = this.options({
 			after: moment().subtract('days', 7).format(),
 			before: moment().format(),
-			featureRegex: /^(.*)closes #\d+(.*)$/gim,
-			bugRegex: /^(.*)fixes #\d+(.*)$/gim,
+			featureRegex: /^(.*)closes #\d+:?(.*)$/gim,
+			bugRegex: /^(.*)fixes #\d+:?(.*)$/gim,
 			dest: 'changelog.txt'
 		});
 
-		grunt.log.writeflags(options, 'Options');
+		grunt.verbose.writeflags(options, 'Options');
 
 		var done = this.async();
 		var args = ['log', '--pretty=format:%s', '--no-merges'];
@@ -33,7 +33,7 @@ module.exports = function (grunt) {
 		args.push('--after="' + options.after + '"');
 		args.push('--before="' + options.before + '"');
 
-		grunt.log.writeln('git ' + args.join(' ') + '\n' );
+		grunt.verbose.writeln('git ' + args.join(' ') + '\n' );
 
 		grunt.util.spawn(
 			{
@@ -47,28 +47,39 @@ module.exports = function (grunt) {
 					return done(false);
 				}
 
-				var match;
+				var output = '';
 
-				function writeChanges(regex) {
-					grunt.log.writeln(regex);
+				function getChanges(regex) {
+					var match;
+
+					var changes = '';
 
 					while ((match = regex.exec(result))) {
-						grunt.log.writeln(match);
-
 						var change = '';
 
 						for (var i = 1, len = match.length; i < len; i++) {
 							change += match[i];
 						}
 
-						grunt.log.ok(change);
+						changes += '  - ' + change.trim() + '\n';
 					}
+
+					if (changes)
+						return changes + '\n';
+					else
+						return '  (none)\n\n';
 				}
 
-				writeChanges(options.featureRegex);
-				writeChanges(options.bugRegex);
+				output += 'NEW:\n\n';
+				output += getChanges(options.featureRegex);
 
-				grunt.file.write(options.dest, result);
+				output += 'FIXES:\n\n';
+				output += getChanges(options.bugRegex);
+
+				grunt.file.write(options.dest, output);
+
+				grunt.log.ok(output);
+				grunt.log.writeln();
 				grunt.log.ok('Changelog written to '+ options.dest);
 
 				done();
