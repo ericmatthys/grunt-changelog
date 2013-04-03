@@ -97,11 +97,15 @@ module.exports = function (grunt) {
 		var done = this.async();
 
 		// Build our options for the git log command. Only print the commit message.
-		var args = ['log', '--pretty=format:%s', '--no-merges'];
-		args.push('--after="' + options.after + '"');
-		args.push('--before="' + options.before + '"');
+		var args = [
+			'log',
+			'--pretty=format:%s',
+			'--no-merges',
+			'--after="' + options.after + '"',
+			'--before="' + options.before + '"'
+		];
 
-		grunt.verbose.writeln('git ' + args.join(' ') + '\n' );
+		grunt.verbose.writeln('git ' + args.join(' '));
 
 		// Run the git log command and parse the result.
 		grunt.util.spawn(
