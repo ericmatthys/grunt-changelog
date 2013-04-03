@@ -20,7 +20,7 @@ grunt.loadNpmTasks('grunt-changelog');
 ## The "changelog" task
 
 ### Overview
-In your project's Gruntfile, add a section named `changelog` to the data object passed into `grunt.initConfig()`.
+In your project's Gruntfile, add a section named `changelog` to the data object passed into `grunt.initConfig()`. The task, by default, will go through the last 7 days of commit messages, looking for issues that were closed or fixed. It will then generate a template-based changelog with those changes and write them to a destination file.
 
 ```js
 grunt.initConfig({
@@ -30,6 +30,19 @@ grunt.initConfig({
 		}
 	},
 })
+```
+
+```
+NEW:
+
+  - Feature 1
+  - Feature 2
+  - Feature 3
+
+FIXES:
+
+  - Fix 1
+  - Fix 2
 ```
 
 ### Options
