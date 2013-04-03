@@ -29,13 +29,13 @@ module.exports = function (grunt) {
 		changelog: {
 			default: {
 				options: {
-					file: 'test/fixtures/log',
+					log: 'test/fixtures/log',
 					dest: 'tmp/changelog_default'
 				}
 			},
 			formatting: {
 				options: {
-					file: 'test/fixtures/log',
+					log: 'test/fixtures/log',
 					dest: 'tmp/changelog_formatting',
 					templates: {
 						main: '{{fixes}}{{features}}\n',
@@ -46,7 +46,7 @@ module.exports = function (grunt) {
 			},
 			regex: {
 				options: {
-					file: 'test/fixtures/log',
+					log: 'test/fixtures/log',
 					dest: 'tmp/changelog_regex',
 					featureRegex: /^closes #\d+:?(.*)$/gm,
 					fixRegex: /^fixes #\d+:?(.*)$/gm

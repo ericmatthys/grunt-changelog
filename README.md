@@ -58,7 +58,7 @@ Default value: `/^(.*)fixes #\d+:?(.*)$/gim`
 
 The regular expression used to match bug fix changes.
 
-#### options.file
+#### options.log
 Type: `String`
 Default value: `undefined`
 

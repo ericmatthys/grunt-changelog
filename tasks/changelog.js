@@ -72,10 +72,10 @@ module.exports = function (grunt) {
 			grunt.log.writeln('Changelog created at '+ options.dest.toString().cyan + '.');
 		}
 
-		// If a file is passed in as an option, don't run the git log command
-		// and just use the file instead.
-		if (options.file) {
-			var result = grunt.file.read(options.file);
+		// If a log is passed in as an option, don't run the git log command
+		// and just use the explicit log instead.
+		if (options.log) {
+			var result = grunt.file.read(options.log);
 			var changelog = getChangelog(result);
 
 			writeChangelog(changelog);
