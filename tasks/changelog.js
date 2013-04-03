@@ -18,8 +18,13 @@ module.exports = function (grunt) {
 			after: moment().subtract('days', 7).format(),
 			before: moment().format(),
 			featureRegex: /^(.*)closes #\d+:?(.*)$/gim,
-			bugRegex: /^(.*)fixes #\d+:?(.*)$/gim,
-			dest: 'changelog.txt'
+			fixRegex: /^(.*)fixes #\d+:?(.*)$/gim,
+			dest: 'changelog.txt',
+			templates: {
+				main: 'NEW:\n\n{{features}}\nFIXES:\n\n{{fixes}}',
+				change: '  - {{change}}\n',
+				empty: '  (none)\n'
+			}
 		});
 
 		grunt.verbose.writeflags(options, 'Options');
@@ -44,7 +49,7 @@ module.exports = function (grunt) {
 					return done(false);
 				}
 
-				var output = '';
+				var output = options.templates.main;
 
 				function getChanges(regex) {
 					var changes = '';
@@ -57,20 +62,17 @@ module.exports = function (grunt) {
 							change += match[i];
 						}
 
-						changes += '  - ' + change.trim() + '\n';
+						changes += options.templates.change.replace('{{change}}', change.trim());
 					}
 
 					if (changes)
-						return changes + '\n';
+						return changes;
 					else
-						return '  (none)\n\n';
+						return options.templates.empty;
 				}
 
-				output += 'NEW:\n\n';
-				output += getChanges(options.featureRegex);
-
-				output += 'FIXES:\n\n';
-				output += getChanges(options.bugRegex);
+				output = output.replace('{{features}}', getChanges(options.featureRegex));
+				output = output.replace('{{fixes}}', getChanges(options.fixRegex));
 
 				grunt.file.write(options.dest, output);
 
