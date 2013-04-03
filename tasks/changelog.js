@@ -27,6 +27,12 @@ module.exports = function (grunt) {
 			}
 		});
 
+		if (!options.after)
+			options.after = moment().subtract('days', 7).format();
+
+		if (!options.before)
+			options.before = moment().format();
+
 		grunt.verbose.writeflags(options, 'Options');
 
 		// Loop through each match and build the string of changes that will
@@ -34,7 +40,6 @@ module.exports = function (grunt) {
 		function getChanges(log, regex) {
 			var changes = '';
 			var match;
-
 
 			while ((match = regex.exec(log))) {
 				var change = '';
@@ -74,7 +79,7 @@ module.exports = function (grunt) {
 
 		// If a log is passed in as an option, don't run the git log command
 		// and just use the explicit log instead.
-		if (options.log) {
+		if (options.log && grunt.file.exists(options.log)) {
 			var result = grunt.file.read(options.log);
 			var changelog = getChangelog(result);
 
@@ -107,7 +112,7 @@ module.exports = function (grunt) {
 
 				var changelog = getChangelog(result);
 
-				writeChangelog(result);
+				writeChangelog(changelog);
 
 				done();
 			}
