@@ -153,7 +153,7 @@ grunt.initConfig({
 			templates: {
 				main: '{{features}}{{fixes}}',
 				change: '  - {{change}}\n',
-				empty: '\n'
+				empty: ''
 			}
 		}
 	},
