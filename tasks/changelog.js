@@ -30,13 +30,15 @@ module.exports = function (grunt) {
 		grunt.verbose.writeflags(options, 'Options');
 
 		var done = this.async();
-		var args = ['log', '--pretty=format:%s', '--no-merges'];
 
+		// Build our options for the git log command. Only print the commit message.
+		var args = ['log', '--pretty=format:%s', '--no-merges'];
 		args.push('--after="' + options.after + '"');
 		args.push('--before="' + options.before + '"');
 
 		grunt.verbose.writeln('git ' + args.join(' ') + '\n' );
 
+		// Run the git log command and parse the result.
 		grunt.util.spawn(
 			{
 				cmd: 'git',
@@ -55,6 +57,8 @@ module.exports = function (grunt) {
 					var changes = '';
 					var match;
 
+					// Loop through each match and build the string that will
+					// replace part of the  main template.
 					while ((match = regex.exec(result))) {
 						var change = '';
 
@@ -74,11 +78,13 @@ module.exports = function (grunt) {
 				output = output.replace('{{features}}', getChanges(options.featureRegex));
 				output = output.replace('{{fixes}}', getChanges(options.fixRegex));
 
+				// Write the output to the destination file.
 				grunt.file.write(options.dest, output);
 
+				// Log the results.
 				grunt.log.ok(output);
 				grunt.log.writeln();
-				grunt.log.ok('Changelog written to '+ options.dest);
+				grunt.log.ok('Changelog created at '+ options.dest + '.');
 
 				done();
 			}
