@@ -164,7 +164,7 @@ grunt.initConfig({
 		options: {
 			dest: 'release-notes/1.0.0.txt',
 			templates: {
-				main: '{{features}}{{fixes}}',
+				main: '{{date}}\n\n{{features}}{{fixes}}',
 				change: '  - {{change}}\n',
 				empty: ''
 			}
@@ -175,6 +175,8 @@ grunt.initConfig({
 
 release-notes/1.0.0.txt
 ```
+2013-05-01
+
   - Feature 1
   - Feature 2
   - Feature 3

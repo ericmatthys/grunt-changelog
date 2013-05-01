@@ -59,6 +59,7 @@ module.exports = function (grunt) {
 		function getChangelog(log) {
 			var output = options.templates.main;
 
+			output = output.replace('{{date}}', moment().format('YYYY-MM-DD'));
 			output = output.replace('{{features}}', getChanges(log, options.featureRegex));
 			output = output.replace('{{fixes}}', getChanges(log, options.fixRegex));
 
