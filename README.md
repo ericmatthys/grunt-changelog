@@ -24,11 +24,11 @@ In your project's Gruntfile, add a section named `changelog` to the data object 
 
 ```js
 grunt.initConfig({
-	changelog: {
-		options: {
-			// Task-specific options go here.
-		}
-	},
+  changelog: {
+    options: {
+      // Task-specific options go here.
+    }
+  },
 })
 ```
 
@@ -108,9 +108,11 @@ In this example, the default options are used to create the changelog. A git log
 
 ```js
 grunt.initConfig({
-	changelog: {
-		options: {}
-	},
+  changelog: {
+    sample: {
+      options: {}
+    }
+  },
 })
 ```
 
@@ -133,12 +135,14 @@ In this example, a custom date range is used to only show changes between March 
 
 ```js
 grunt.initConfig({
-	changelog: {
-		options: {
-			after: '2013-03-01',
-			before: '2013-03-14'
-		}
-	},
+  changelog: {
+    sample: {
+      options: {
+        after: '2013-03-01',
+        before: '2013-03-14'
+      }
+    }
+  },
 })
 ```
 
@@ -147,11 +151,13 @@ In this example, a custom destination is used to write the changelog to a differ
 
 ```js
 grunt.initConfig({
-	changelog: {
-		options: {
-			dest: 'release-notes/1.0.0.txt'
-		}
-	},
+  changelog: {
+    sample: {
+      options: {
+        dest: 'release-notes/1.0.0.txt'
+      }
+    }
+  },
 })
 ```
 
@@ -160,16 +166,18 @@ In this example, custom formatting is used to create a simple changelog with the
 
 ```js
 grunt.initConfig({
-	changelog: {
-		options: {
-			dest: 'release-notes/1.0.0.txt',
-			templates: {
-				main: '{{date}}\n\n{{features}}{{fixes}}',
-				change: '  - {{change}}\n',
-				empty: ''
-			}
-		}
-	},
+  changelog: {
+    sample: {
+      options: {
+        dest: 'release-notes/1.0.0.txt',
+        templates: {
+          main: '{{date}}\n\n{{features}}{{fixes}}',
+          change: '  - {{change}}\n',
+          empty: ''
+        }
+      }
+    }
+  },
 })
 ```
 
