@@ -25,8 +25,10 @@ In your project's Gruntfile, add a section named `changelog` to the data object 
 ```js
 grunt.initConfig({
   changelog: {
-    options: {
-      // Task-specific options go here.
+    sample: {
+      options: {
+        // Task-specific options go here.
+      }
     }
   },
 })
