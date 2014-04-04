@@ -22,14 +22,18 @@ module.exports = function (grunt) {
 				main: 'NEW:\n\n{{features}}\nFIXES:\n\n{{fixes}}',
 				change: '  - {{change}}\n',
 				empty: '  (none)\n'
-			}
+			},
+			useTags: false
 		});
 
 		if (!options.after)
 			options.after = moment().subtract('days', 7).format();
 
-		if (!options.before)
+		if (!options.before && !options.useTags)
 			options.before = moment().format();
+			
+		if (!options.before && options.useTags)
+			options.before = 'HEAD';
 
 		grunt.verbose.writeflags(options, 'Options');
 
@@ -103,6 +107,15 @@ module.exports = function (grunt) {
 			'--after="' + options.after + '"',
 			'--before="' + options.before + '"'
 		];
+		
+		if (options.useTags) {
+			args = [
+				'log',
+				options.after + '..' + options.before,
+				'--pretty=format:%s',
+				'--no-merges'
+			];
+		}
 
 		grunt.verbose.writeln('git ' + args.join(' '));
 
