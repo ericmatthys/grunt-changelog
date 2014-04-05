@@ -23,7 +23,7 @@ module.exports = function (grunt) {
 				change: '  - {{change}}\n',
 				empty: '  (none)\n'
 			},
-			gitRange: undefined
+			gitRange: {}
 		});
 
 		if (!options.after)
@@ -31,6 +31,9 @@ module.exports = function (grunt) {
 
 		if (!options.before)
 			options.before = moment().format();
+			
+		if (!options.gitRange.before)
+			options.gitRange.before = 'HEAD';
 
 		grunt.verbose.writeflags(options, 'Options');
 
@@ -105,11 +108,7 @@ module.exports = function (grunt) {
 			'--before="' + options.before + '"'
 		];
 		
-		if (options.gitRange) {
-			if (!options.gitRange.before) {
-				options.gitRange.before = 'HEAD';
-			}
-			
+		if (options.gitRange.after) {
 			args = [
 				'log',
 				options.gitRange.after + '..' + options.gitRange.before,
