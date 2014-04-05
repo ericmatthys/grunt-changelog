@@ -23,17 +23,14 @@ module.exports = function (grunt) {
 				change: '  - {{change}}\n',
 				empty: '  (none)\n'
 			},
-			useTags: false
+			gitRange: undefined
 		});
 
 		if (!options.after)
 			options.after = moment().subtract('days', 7).format();
 
-		if (!options.before && !options.useTags)
+		if (!options.before)
 			options.before = moment().format();
-			
-		if (!options.before && options.useTags)
-			options.before = 'HEAD';
 
 		grunt.verbose.writeflags(options, 'Options');
 
@@ -108,10 +105,14 @@ module.exports = function (grunt) {
 			'--before="' + options.before + '"'
 		];
 		
-		if (options.useTags) {
+		if (options.gitRange) {
+			if (!options.gitRange.before) {
+				options.gitRange.before = 'HEAD';
+			}
+			
 			args = [
 				'log',
-				options.after + '..' + options.before,
+				options.gitRange.after + '..' + options.gitRange.before,
 				'--pretty=format:%s',
 				'--no-merges'
 			];
