@@ -22,7 +22,8 @@ module.exports = function (grunt) {
 				main: 'NEW:\n\n{{features}}\nFIXES:\n\n{{fixes}}',
 				change: '  - {{change}}\n',
 				empty: '  (none)\n'
-			}
+			},
+			gitRange: {}
 		});
 
 		if (!options.after)
@@ -30,6 +31,9 @@ module.exports = function (grunt) {
 
 		if (!options.before)
 			options.before = moment().format();
+			
+		if (!options.gitRange.before)
+			options.gitRange.before = 'HEAD';
 
 		grunt.verbose.writeflags(options, 'Options');
 
@@ -103,6 +107,15 @@ module.exports = function (grunt) {
 			'--after="' + options.after + '"',
 			'--before="' + options.before + '"'
 		];
+		
+		if (options.gitRange.after) {
+			args = [
+				'log',
+				options.gitRange.after + '..' + options.gitRange.before,
+				'--pretty=format:%s',
+				'--no-merges'
+			];
+		}
 
 		grunt.verbose.writeln('git ' + args.join(' '));
 
