@@ -13,13 +13,15 @@ module.exports = function (grunt) {
 	var Handlebars = require('handlebars');
 	var moment = require('moment');
 
-	grunt.registerMultiTask('changelog', 'Generate a changelog based on commit messages.', function () {
+	grunt.registerMultiTask('changelog', 'Generate a changelog based on commit messages.', function (after, before) {
 		// Merge task-specific and/or target-specific options with these defaults.
 		var options = this.options({
 			featureRegex: /^(.*)closes #\d+:?(.*)$/gim,
 			fixRegex: /^(.*)fixes #\d+:?(.*)$/gim,
 			dest: 'changelog.txt',
-			template: '{{> features}}{{> fixes}}'
+			template: '{{> features}}{{> fixes}}',
+			after: after,
+			before: before
 		});
 
 		// Extend partials separately so only one custom partial can be specified
