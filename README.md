@@ -221,7 +221,7 @@ grunt.initConfig({
         dest: 'release-notes/1.0.0.txt',
         partials: {
           features: '{{#each features}}{{> feature}}{{/each}}',
-          feature: '[NEW] {{this}}',
+          feature: '[NEW] {{this}}\n',
           fixes: '{{#each fixes}}{{> fix}}{{/each}}',
           fix: '[FIX] {{this}}\n'
         }
