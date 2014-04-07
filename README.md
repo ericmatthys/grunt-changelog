@@ -53,13 +53,13 @@ FIXES:
 Type: `String`
 Default value: `7 days ago`
 
-An ISO-8601 date string that the git log will start at.
+A date string, commit SHA, or tag that the git log will start at.
 
 #### options.before
 Type: `String`
 Default value: `now`
 
-An ISO-8601 date string that the git log will end at.
+A date string, commit SHA, or tag that the git log will end at. The type must match what was used for after (e.g. you cannot use a date string for after and a commit SHA for before).
 
 #### options.featureRegex
 Type: `RegEx`

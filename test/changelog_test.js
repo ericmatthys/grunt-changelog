@@ -23,43 +23,43 @@ var grunt = require('grunt');
 */
 
 exports.changelog = {
-	default_options: function (test) {
-		test.expect(1);
+  default_options: function (test) {
+    test.expect(1);
 
-		var actual = grunt.file.read('tmp/changelog_default');
-		var expected = grunt.file.read('test/expected/default');
-		test.equal(actual, expected, 'The changelog should be generated with the default options.');
+    var actual = grunt.file.read('tmp/changelog_default');
+    var expected = grunt.file.read('test/expected/default');
+    test.equal(actual, expected, 'The changelog should be generated with the default options.');
 
-		test.done();
-	},
+    test.done();
+  },
 
-	formatting_options: function (test) {
-		test.expect(1);
+  formatting_options: function (test) {
+    test.expect(1);
 
-		var actual = grunt.file.read('tmp/changelog_formatting');
-		var expected = grunt.file.read('test/expected/formatting');
-		test.equal(actual, expected, 'The custom template in options should be used to create the changelog.');
+    var actual = grunt.file.read('tmp/changelog_formatting');
+    var expected = grunt.file.read('test/expected/formatting');
+    test.equal(actual, expected, 'The custom template in options should be used to create the changelog.');
 
-		test.done();
-	},
+    test.done();
+  },
 
-	regex_options: function (test) {
-		test.expect(1);
+  regex_options: function (test) {
+    test.expect(1);
 
-		var actual = grunt.file.read('tmp/changelog_regex');
-		var expected = grunt.file.read('test/expected/regex');
-		test.equal(actual, expected, 'The custom regex in options should be used to match changes in the log.');
+    var actual = grunt.file.read('tmp/changelog_regex');
+    var expected = grunt.file.read('test/expected/regex');
+    test.equal(actual, expected, 'The custom regex in options should be used to match changes in the log.');
 
-		test.done();
-	},
+    test.done();
+  },
 
-	empty_partial: function (test) {
-		test.expect(1);
+  empty_partial: function (test) {
+    test.expect(1);
 
-		var actual = grunt.file.read('tmp/changelog_empty');
-		var expected = grunt.file.read('test/expected/empty');
-		test.equal(actual, expected, 'The empty partial in options should be used in the changelog.');
+    var actual = grunt.file.read('tmp/changelog_empty');
+    var expected = grunt.file.read('test/expected/empty');
+    test.equal(actual, expected, 'The empty partial in options should be used in the changelog.');
 
-		test.done();
-	}
+    test.done();
+  }
 };

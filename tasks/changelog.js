@@ -9,130 +9,155 @@
 'use strict';
 
 module.exports = function (grunt) {
-	var _ = require('underscore');
-	var Handlebars = require('handlebars');
-	var moment = require('moment');
+  var _ = require('underscore');
+  var Handlebars = require('handlebars');
+  var moment = require('moment');
 
-	grunt.registerMultiTask('changelog', 'Generate a changelog based on commit messages.', function (after, before) {
-		// Merge task-specific and/or target-specific options with these defaults.
-		var options = this.options({
-			featureRegex: /^(.*)closes #\d+:?(.*)$/gim,
-			fixRegex: /^(.*)fixes #\d+:?(.*)$/gim,
-			dest: 'changelog.txt',
-			template: '{{> features}}{{> fixes}}',
-			after: after,
-			before: before
-		});
+  grunt.registerMultiTask('changelog', 'Generate a changelog based on commit messages.', function (after, before) {
+    // Merge task-specific and/or target-specific options with these defaults.
+    var options = this.options({
+      featureRegex: /^(.*)closes #\d+:?(.*)$/gim,
+      fixRegex: /^(.*)fixes #\d+:?(.*)$/gim,
+      dest: 'changelog.txt',
+      template: '{{> features}}{{> fixes}}',
+      after: after,
+      before: before
+    });
 
-		// Extend partials separately so only one custom partial can be specified
-		// without having to provide every single partial.
-		var partials = _.extend({
-			features: 'NEW:\n\n{{#if features}}{{#each features}}{{> feature}}{{/each}}{{else}}{{> empty}}{{/if}}\n',
-			feature: '  - {{this}}\n',
-			fixes: 'FIXES:\n\n{{#if fixes}}{{#each fixes}}{{> fix}}{{/each}}{{else}}{{> empty}}{{/if}}',
-			fix: '  - {{this}}\n',
-			empty: '  (none)\n'
-		}, options.partials);
+    // Extend partials separately so only one custom partial can be specified
+    // without having to provide every single partial.
+    var partials = _.extend({
+      features: 'NEW:\n\n{{#if features}}{{#each features}}{{> feature}}{{/each}}{{else}}{{> empty}}{{/if}}\n',
+      feature: '  - {{this}}\n',
+      fixes: 'FIXES:\n\n{{#if fixes}}{{#each fixes}}{{> fix}}{{/each}}{{else}}{{> empty}}{{/if}}',
+      fix: '  - {{this}}\n',
+      empty: '  (none)\n'
+    }, options.partials);
 
-		if (!options.after)
-			options.after = moment().subtract('days', 7).format();
+    var after;
+    var before;
+    var isDateRange;
 
-		if (!options.before)
-			options.before = moment().format();
+    // Determine if a date or a commit sha / tag was provided for the after
+    // option. This will determine what kind of range we need to use.
+    if (options.after) {
+      after = moment(options.after);
+      isDateRange = after.isValid();
 
-		// Compile and register our templates and partials.
-		var template = Handlebars.compile(options.template);
+      // Fallback to the provided after value if it is not a valid date. This
+      // likely means that a commit sha or tag is being used.
+      if (!isDateRange)
+        after = options.after;
+    } else {
+      // If no after option is provided, default to using the last week.
+      after = moment().subtract('days', 7);
+      isDateRange = true;
+    }
 
-		for (var key in partials) {
-			Handlebars.registerPartial(key, Handlebars.compile(partials[key]));
-		}
+    if (isDateRange) {
+      before = options.before ? moment(options.before) : moment();
+    } else {
+      before = options.before ? options.before : 'HEAD';
+    }
 
-		grunt.verbose.writeflags(options, 'Options');
+    // Compile and register our templates and partials.
+    var template = Handlebars.compile(options.template);
 
-		// Loop through each match and build the array of changes that will be
-		// passed to the template.
-		function getChanges(log, regex) {
-			var changes = [];
-			var match;
+    for (var key in partials) {
+      Handlebars.registerPartial(key, Handlebars.compile(partials[key]));
+    }
 
-			while ((match = regex.exec(log))) {
-				var change = '';
+    grunt.verbose.writeflags(options, 'Options');
 
-				for (var i = 1, len = match.length; i < len; i++) {
-					change += match[i];
-				}
+    // Loop through each match and build the array of changes that will be
+    // passed to the template.
+    function getChanges(log, regex) {
+      var changes = [];
+      var match;
 
-				changes.push(change.trim());
-			}
+      while ((match = regex.exec(log))) {
+        var change = '';
 
-			return changes;
-		}
+        for (var i = 1, len = match.length; i < len; i++) {
+          change += match[i];
+        }
 
-		// Generate the changelog using the templates defined in options.
-		function getChangelog(log) {
-			var data = {
-				date: moment().format('YYYY-MM-DD'),
-				features: getChanges(log, options.featureRegex),
-				fixes: getChanges(log, options.fixRegex)
-			};
+        changes.push(change.trim());
+      }
 
-			return template(data);
-		}
+      return changes;
+    }
 
-		// Write the changelog to the destination file.
-		function writeChangelog(changelog) {
-			grunt.file.write(options.dest, changelog);
+    // Generate the changelog using the templates defined in options.
+    function getChangelog(log) {
+      var data = {
+        date: moment().format('YYYY-MM-DD'),
+        features: getChanges(log, options.featureRegex),
+        fixes: getChanges(log, options.fixRegex)
+      };
 
-			// Log the results.
-			grunt.log.ok(changelog);
-			grunt.log.writeln();
-			grunt.log.writeln('Changelog created at '+ options.dest.toString().cyan + '.');
-		}
+      return template(data);
+    }
 
-		// If a log is passed in as an option, don't run the git log command
-		// and just use the explicit log instead.
-		if (options.log) {
-			// Check to make sure that the log exists before going any further.
-			if (!grunt.file.exists(options.log)) {
-				grunt.fatal('This log file does not exist.');
-				return false;
-			}
+    // Write the changelog to the destination file.
+    function writeChangelog(changelog) {
+      grunt.file.write(options.dest, changelog);
 
-			var result = grunt.file.read(options.log);
-			writeChangelog(getChangelog(result));
+      // Log the results.
+      grunt.log.ok(changelog);
+      grunt.log.writeln();
+      grunt.log.writeln('Changelog created at '+ options.dest.toString().cyan + '.');
+    }
 
-			return;
-		}
+    // If a log is passed in as an option, don't run the git log command
+    // and just use the explicit log instead.
+    if (options.log) {
+      // Check to make sure that the log exists before going any further.
+      if (!grunt.file.exists(options.log)) {
+        grunt.fatal('This log file does not exist.');
+        return false;
+      }
 
-		var done = this.async();
+      var result = grunt.file.read(options.log);
+      writeChangelog(getChangelog(result));
 
-		// Build our options for the git log command. Only print the commit message.
-		var args = [
-			'log',
-			'--pretty=format:%s',
-			'--no-merges',
-			'--after="' + options.after + '"',
-			'--before="' + options.before + '"'
-		];
+      return;
+    }
 
-		grunt.verbose.writeln('git ' + args.join(' '));
+    var done = this.async();
 
-		// Run the git log command and parse the result.
-		grunt.util.spawn(
-			{
-				cmd: 'git',
-				args: args
-			},
+    // Build our options for the git log command. Only print the commit message.
+    var args = [
+      'log',
+      '--pretty=format:%s',
+      '--no-merges'
+    ];
 
-			function (error, result) {
-				if (error) {
-					grunt.log.error(error);
-					return done(false);
-				}
+    if (isDateRange) {
+      args.push('--after="' + after.format() + '"');
+      args.push('--before="' + before.format() + '"');
+    } else {
+      args.splice(1, 0, after + '..' + before);
+    }
 
-				writeChangelog(getChangelog(result));
-				done();
-			}
-		);
-	});
+    grunt.verbose.writeln('git ' + args.join(' '));
+
+    // Run the git log command and parse the result.
+    grunt.util.spawn(
+      {
+        cmd: 'git',
+        args: args
+      },
+
+      function (error, result) {
+        if (error) {
+          grunt.log.error(error);
+          return done(false);
+        }
+
+        writeChangelog(getChangelog(result));
+        done();
+      }
+    );
+  });
 };

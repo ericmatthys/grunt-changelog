@@ -9,74 +9,74 @@
 'use strict';
 
 module.exports = function (grunt) {
-	grunt.initConfig({
-		jshint: {
-			all: [
-				'Gruntfile.js',
-				'tasks/*.js',
-				'<%= nodeunit.tests %>',
-			],
-			options: {
-				jshintrc: '.jshintrc',
-			},
-		},
+  grunt.initConfig({
+    jshint: {
+      all: [
+        'Gruntfile.js',
+        'tasks/*.js',
+        '<%= nodeunit.tests %>',
+      ],
+      options: {
+        jshintrc: '.jshintrc',
+      },
+    },
 
-		clean: {
-			tests: ['tmp'],
-		},
+    clean: {
+      tests: ['tmp'],
+    },
 
-		changelog: {
-			default_options: {
-				options: {
-					log: 'test/fixtures/log',
-					dest: 'tmp/changelog_default'
-				}
-			},
+    changelog: {
+      default_options: {
+        options: {
+          log: 'test/fixtures/log',
+          dest: 'tmp/changelog_default'
+        }
+      },
 
-			formatting_options: {
-				options: {
-					log: 'test/fixtures/log',
-					dest: 'tmp/changelog_formatting',
-					template: '{{> fixes}}{{> features}}\n',
+      formatting_options: {
+        options: {
+          log: 'test/fixtures/log',
+          dest: 'tmp/changelog_formatting',
+          template: '{{> fixes}}{{> features}}\n',
 
-					partials: {
-						features: '{{#each features}}{{> feature}}{{/each}}',
-						feature: '{{this}}',
-						fixes: '{{#each fixes}}{{> fix}}{{/each}}',
-						fix: '{{this}}'
-					}
-				}
-			},
+          partials: {
+            features: '{{#each features}}{{> feature}}{{/each}}',
+            feature: '{{this}}',
+            fixes: '{{#each fixes}}{{> fix}}{{/each}}',
+            fix: '{{this}}'
+          }
+        }
+      },
 
-			regex_options: {
-				options: {
-					log: 'test/fixtures/log',
-					dest: 'tmp/changelog_regex',
-					featureRegex: /^closes #\d+:?(.*)$/gm,
-					fixRegex: /^fixes #\d+:?(.*)$/gm
-				}
-			},
+      regex_options: {
+        options: {
+          log: 'test/fixtures/log',
+          dest: 'tmp/changelog_regex',
+          featureRegex: /^closes #\d+:?(.*)$/gm,
+          fixRegex: /^fixes #\d+:?(.*)$/gm
+        }
+      },
 
-			empty_partial: {
-				options: {
-					log: 'test/fixtures/log_fixes_only',
-					dest: 'tmp/changelog_empty'
-				}
-			}
-		},
+      empty_partial: {
+        options: {
+          log: 'test/fixtures/log_fixes_only',
+          dest: 'tmp/changelog_empty'
+        }
+      }
+    },
 
-		nodeunit: {
-			tests: ['test/*_test.js'],
-		}
-	});
+    nodeunit: {
+      tests: ['test/*_test.js'],
+    }
+  });
 
-	grunt.loadTasks('tasks');
+  grunt.loadTasks('tasks');
 
-	grunt.loadNpmTasks('grunt-contrib-jshint');
-	grunt.loadNpmTasks('grunt-contrib-clean');
-	grunt.loadNpmTasks('grunt-contrib-nodeunit');
+  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-contrib-nodeunit');
 
-	grunt.registerTask('test', ['clean', 'changelog', 'nodeunit']);
+  grunt.registerTask('test', ['clean', 'changelog', 'nodeunit']);
 
-	grunt.registerTask('default', ['jshint', 'test']);
+  grunt.registerTask('default', ['jshint', 'test']);
 };
