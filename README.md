@@ -85,23 +85,41 @@ Default value: `changelog`
 
 The file path to write the changelog to.
 
-#### options.templates.main
+#### options.template
 Type: `String`
-Default value: `NEW:\n\n{{features}}\nFIXES:\n\n{{fixes}}`
+Default value: `{{> features}}{{> fixes}}`
 
-The main template used for creating the changelog.
+The Handlebars template used for creating the changelog.
 
-#### options.templates.change
+#### options.partials.features
 Type: `String`
-Default value: `  - {{change}}\n`
+Default value: `'NEW:\n\n{{#if features}}{{#each features}}{{> feature}}{{/each}}{{else}}{{> empty}}{{/if}}\n'`
 
-The template used for creating each individual change.
+The Handlebars partial used for the list of features.
 
-#### options.templates.empty
+#### options.partials.feature
 Type: `String`
-Default value: `  (none)\n`
+Default value: `'  - {{this}}\n'`
 
-The template used when no changes are found.
+The Handlebars partial used for each individual feature.
+
+#### options.partials.fixes
+Type: `String`
+Default value: `'FIXES:\n\n{{#if fixes}}{{#each fixes}}{{> fix}}{{/each}}{{else}}{{> empty}}{{/if}}'`
+
+The Handlebars partial used for the list of fixes.
+
+#### options.partials.fix
+Type: `String`
+Default value: `'  - {{this}}\n'`
+
+The Handlebars partial used for each individual fix.
+
+#### options.partials.empty
+Type: `String`
+Default value: `'  (none)\n'`
+
+The Handlebars partial used by features or fixes when there are no changes.
 
 ### Usage Examples
 
@@ -164,7 +182,7 @@ grunt.initConfig({
 ```
 
 #### Custom Formatting
-In this example, custom formatting is used to create a simple changelog with the list of features and fixes.
+In these examples, custom formatting is used to create a simple changelog with the list of features and fixes.
 
 ```js
 grunt.initConfig({
@@ -172,11 +190,7 @@ grunt.initConfig({
     sample: {
       options: {
         dest: 'release-notes/1.0.0.txt',
-        templates: {
-          main: '{{date}}\n\n{{features}}{{fixes}}',
-          change: '  - {{change}}\n',
-          empty: ''
-        }
+        template: '{{date}}\n\n{{> features}}{{> fixes}}'
       }
     }
   },
@@ -187,11 +201,43 @@ release-notes/1.0.0.txt
 ```
 2013-05-01
 
+NEW:
+
   - Feature 1
   - Feature 2
   - Feature 3
+
+FIXES:
+
   - Fix 1
   - Fix 2
+```
+
+```js
+grunt.initConfig({
+  changelog: {
+    sample: {
+      options: {
+        dest: 'release-notes/1.0.0.txt',
+        partials: {
+          features: '{{#each features}}{{> feature}}{{/each}}',
+          feature: '[NEW] {{this}}',
+          fixes: '{{#each fixes}}{{> fix}}{{/each}}',
+          fix: '[FIX] {{this}}\n'
+        }
+      }
+    }
+  },
+})
+```
+
+release-notes/1.0.0.txt
+```
+[NEW] Feature 1
+[NEW] Feature 2
+[NEW] Feature 3
+[FIX] Fix 1
+[FIX] Fix 2
 ```
 
 ## Contributing

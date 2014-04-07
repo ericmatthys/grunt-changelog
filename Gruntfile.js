@@ -9,7 +9,6 @@
 'use strict';
 
 module.exports = function (grunt) {
-
 	grunt.initConfig({
 		jshint: {
 			all: [
@@ -33,23 +32,35 @@ module.exports = function (grunt) {
 					dest: 'tmp/changelog_default'
 				}
 			},
+
 			formatting_options: {
 				options: {
 					log: 'test/fixtures/log',
 					dest: 'tmp/changelog_formatting',
-					templates: {
-						main: '{{fixes}}{{features}}\n',
-						change: '{{change}}',
-						empty: 'none'
+					template: '{{> fixes}}{{> features}}\n',
+
+					partials: {
+						features: '{{#each features}}{{> feature}}{{/each}}',
+						feature: '{{this}}',
+						fixes: '{{#each fixes}}{{> fix}}{{/each}}',
+						fix: '{{this}}'
 					}
 				}
 			},
+
 			regex_options: {
 				options: {
 					log: 'test/fixtures/log',
 					dest: 'tmp/changelog_regex',
 					featureRegex: /^closes #\d+:?(.*)$/gm,
 					fixRegex: /^fixes #\d+:?(.*)$/gm
+				}
+			},
+
+			empty_partial: {
+				options: {
+					log: 'test/fixtures/log_fixes_only',
+					dest: 'tmp/changelog_empty'
 				}
 			}
 		},
@@ -68,5 +79,4 @@ module.exports = function (grunt) {
 	grunt.registerTask('test', ['clean', 'changelog', 'nodeunit']);
 
 	grunt.registerTask('default', ['jshint', 'test']);
-
 };

@@ -9,7 +9,7 @@
 'use strict';
 
 module.exports = function (grunt) {
-
+	var Handlebars = require('handlebars');
 	var moment = require('moment');
 
 	grunt.registerMultiTask('changelog', 'Generate a changelog based on commit messages.', function () {
@@ -18,9 +18,14 @@ module.exports = function (grunt) {
 			featureRegex: /^(.*)closes #\d+:?(.*)$/gim,
 			fixRegex: /^(.*)fixes #\d+:?(.*)$/gim,
 			dest: 'changelog.txt',
-			templates: {
-				main: 'NEW:\n\n{{features}}\nFIXES:\n\n{{fixes}}',
-				change: '  - {{change}}\n',
+
+			template: '{{> features}}{{> fixes}}',
+
+			partials: {
+				features: 'NEW:\n\n{{#if features}}{{#each features}}{{> feature}}{{/each}}{{else}}{{> empty}}{{/if}}\n',
+				feature: '  - {{this}}\n',
+				fixes: 'FIXES:\n\n{{#if fixes}}{{#each fixes}}{{> fix}}{{/each}}{{else}}{{> empty}}{{/if}}',
+				fix: '  - {{this}}\n',
 				empty: '  (none)\n'
 			}
 		});
@@ -31,12 +36,20 @@ module.exports = function (grunt) {
 		if (!options.before)
 			options.before = moment().format();
 
+		// Compile and register our templates and partials.
+		var template = Handlebars.compile(options.template);
+		var partials = options.partials;
+
+		for (var key in partials) {
+			Handlebars.registerPartial(key, Handlebars.compile(partials[key]));
+		}
+
 		grunt.verbose.writeflags(options, 'Options');
 
-		// Loop through each match and build the string of changes that will
-		// replace part of the main template.
+		// Loop through each match and build the array of changes that will be
+		// passed to the template.
 		function getChanges(log, regex) {
-			var changes = '';
+			var changes = [];
 			var match;
 
 			while ((match = regex.exec(log))) {
@@ -46,24 +59,21 @@ module.exports = function (grunt) {
 					change += match[i];
 				}
 
-				changes += options.templates.change.replace('{{change}}', change.trim());
+				changes.push(change.trim());
 			}
 
-			if (changes)
-				return changes;
-			else
-				return options.templates.empty;
+			return changes;
 		}
 
 		// Generate the changelog using the templates defined in options.
 		function getChangelog(log) {
-			var output = options.templates.main;
+			var data = {
+				date: moment().format('YYYY-MM-DD'),
+				features: getChanges(log, options.featureRegex),
+				fixes: getChanges(log, options.fixRegex)
+			};
 
-			output = output.replace('{{date}}', moment().format('YYYY-MM-DD'));
-			output = output.replace('{{features}}', getChanges(log, options.featureRegex));
-			output = output.replace('{{fixes}}', getChanges(log, options.fixRegex));
-
-			return output;
+			return template(data);
 		}
 
 		// Write the changelog to the destination file.
@@ -86,9 +96,7 @@ module.exports = function (grunt) {
 			}
 
 			var result = grunt.file.read(options.log);
-			var changelog = getChangelog(result);
-
-			writeChangelog(changelog);
+			writeChangelog(getChangelog(result));
 
 			return;
 		}
@@ -119,13 +127,9 @@ module.exports = function (grunt) {
 					return done(false);
 				}
 
-				var changelog = getChangelog(result);
-
-				writeChangelog(changelog);
-
+				writeChangelog(getChangelog(result));
 				done();
 			}
 		);
 	});
-
 };

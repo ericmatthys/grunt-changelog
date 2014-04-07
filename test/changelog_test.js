@@ -38,7 +38,7 @@ exports.changelog = {
 
 		var actual = grunt.file.read('tmp/changelog_formatting');
 		var expected = grunt.file.read('test/expected/formatting');
-		test.equal(actual, expected, 'The custom templates in options should be used to create the changelog.');
+		test.equal(actual, expected, 'The custom template in options should be used to create the changelog.');
 
 		test.done();
 	},
@@ -49,6 +49,16 @@ exports.changelog = {
 		var actual = grunt.file.read('tmp/changelog_regex');
 		var expected = grunt.file.read('test/expected/regex');
 		test.equal(actual, expected, 'The custom regex in options should be used to match changes in the log.');
+
+		test.done();
+	},
+
+	empty_partial: function (test) {
+		test.expect(1);
+
+		var actual = grunt.file.read('tmp/changelog_empty');
+		var expected = grunt.file.read('test/expected/empty');
+		test.equal(actual, expected, 'The empty partial in options should be used in the changelog.');
 
 		test.done();
 	}
