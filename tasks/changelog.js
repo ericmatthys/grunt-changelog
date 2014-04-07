@@ -9,6 +9,7 @@
 'use strict';
 
 module.exports = function (grunt) {
+	var _ = require('underscore');
 	var Handlebars = require('handlebars');
 	var moment = require('moment');
 
@@ -18,17 +19,18 @@ module.exports = function (grunt) {
 			featureRegex: /^(.*)closes #\d+:?(.*)$/gim,
 			fixRegex: /^(.*)fixes #\d+:?(.*)$/gim,
 			dest: 'changelog.txt',
-
-			template: '{{> features}}{{> fixes}}',
-
-			partials: {
-				features: 'NEW:\n\n{{#if features}}{{#each features}}{{> feature}}{{/each}}{{else}}{{> empty}}{{/if}}\n',
-				feature: '  - {{this}}\n',
-				fixes: 'FIXES:\n\n{{#if fixes}}{{#each fixes}}{{> fix}}{{/each}}{{else}}{{> empty}}{{/if}}',
-				fix: '  - {{this}}\n',
-				empty: '  (none)\n'
-			}
+			template: '{{> features}}{{> fixes}}'
 		});
+
+		// Extend partials separately so only one custom partial can be specified
+		// without having to provide every single partial.
+		var partials = _.extend({
+			features: 'NEW:\n\n{{#if features}}{{#each features}}{{> feature}}{{/each}}{{else}}{{> empty}}{{/if}}\n',
+			feature: '  - {{this}}\n',
+			fixes: 'FIXES:\n\n{{#if fixes}}{{#each fixes}}{{> fix}}{{/each}}{{else}}{{> empty}}{{/if}}',
+			fix: '  - {{this}}\n',
+			empty: '  (none)\n'
+		}, options.partials);
 
 		if (!options.after)
 			options.after = moment().subtract('days', 7).format();
@@ -38,7 +40,6 @@ module.exports = function (grunt) {
 
 		// Compile and register our templates and partials.
 		var template = Handlebars.compile(options.template);
-		var partials = options.partials;
 
 		for (var key in partials) {
 			Handlebars.registerPartial(key, Handlebars.compile(partials[key]));
