@@ -166,6 +166,26 @@ grunt.initConfig({
 })
 ```
 
+You can also pass values for after and before directly.
+
+From 1/12/2014 to today
+
+```
+$ grunt changelog:sample:1/12/2014
+```
+
+From commit dffcc01 to 6408ff7
+
+```
+$ grunt changelog:sample:dffcc01:6408ff7
+```
+
+From tag 0.9.8 to HEAD
+
+```
+$ grunt changelog:sample:0.9.8
+```
+
 #### Custom Destination
 In this example, a custom destination is used to write the changelog to a different location.
 
@@ -174,7 +194,7 @@ grunt.initConfig({
   changelog: {
     sample: {
       options: {
-        dest: 'release-notes/1.0.0.txt'
+        dest: 'release-notes/<%= package.version %>.txt'
       }
     }
   },
@@ -189,7 +209,7 @@ grunt.initConfig({
   changelog: {
     sample: {
       options: {
-        dest: 'release-notes/1.0.0.txt',
+        dest: 'release-notes/<%= package.version %>.txt',
         template: '{{date}}\n\n{{> features}}{{> fixes}}'
       }
     }
@@ -218,7 +238,7 @@ grunt.initConfig({
   changelog: {
     sample: {
       options: {
-        dest: 'release-notes/1.0.0.txt',
+        dest: 'release-notes/<%= package.version %>.txt',
         partials: {
           features: '{{#each features}}{{> feature}}{{/each}}',
           feature: '[NEW] {{this}}\n',
