@@ -62,6 +62,38 @@ module.exports = function (grunt) {
           log: 'test/fixtures/log_fixes_only',
           dest: 'tmp/changelog_empty'
         }
+      },
+
+      prepend_prime: {
+        options: {
+          log: 'test/fixtures/log',
+          dest: 'tmp/changelog_prepend',
+          insertType: 'prepend'
+        }
+      },
+
+      prepend: {
+        options: {
+          log: 'test/fixtures/log_insert_type',
+          dest: 'tmp/changelog_prepend',
+          insertType: 'prepend'
+        }
+      },
+
+      append_prime: {
+        options: {
+          log: 'test/fixtures/log',
+          dest: 'tmp/changelog_append',
+          insertType: 'append'
+        }
+      },
+
+      append: {
+        options: {
+          log: 'test/fixtures/log_insert_type',
+          dest: 'tmp/changelog_append',
+          insertType: 'append'
+        }
       }
     },
 

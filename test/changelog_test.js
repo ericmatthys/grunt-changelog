@@ -61,5 +61,25 @@ exports.changelog = {
     test.equal(actual, expected, 'The empty partial in options should be used in the changelog.');
 
     test.done();
-  }
+  },
+
+  prepend: function (test) {
+    test.expect(1);
+
+    var actual = grunt.file.read('tmp/changelog_prepend');
+    var expected = grunt.file.read('test/expected/prepend');
+    test.equal(actual, expected, 'The changelog should be prepended.');
+
+    test.done();
+  },
+
+  append: function (test) {
+    test.expect(1);
+
+    var actual = grunt.file.read('tmp/changelog_append');
+    var expected = grunt.file.read('test/expected/append');
+    test.equal(actual, expected, 'The changelog should be appended.');
+
+    test.done();
+  },
 };

@@ -101,6 +101,23 @@ module.exports = function (grunt) {
 
     // Write the changelog to the destination file.
     function writeChangelog(changelog) {
+
+      if (options.insertType && grunt.file.exists(options.dest)) {
+        var fileContents = grunt.file.read(options.dest);
+
+        switch (options.insertType) {
+          case 'prepend':
+            changelog = changelog + '\n' + fileContents;
+            break;
+          case 'append':
+            changelog = fileContents + '\n' + changelog;
+            break;
+          default:
+            grunt.fatal('"' + options.insertType + '" is not a valid insertType. Please use "append" or "prepend".');
+            return false;
+        }
+      }
+
       grunt.file.write(options.dest, changelog);
 
       // Log the results.

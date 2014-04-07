@@ -85,6 +85,12 @@ Default value: `changelog`
 
 The file path to write the changelog to.
 
+#### options.insertType
+Type: `String`
+Default value: `undefined`
+
+Can be set to `prepend`, or `append`.  This will prepend / append the changelog to the file set by `options.dest`.  If nothing is set, the `options.dest` file will be overwritten.
+
 #### options.template
 Type: `String`
 Default value: `{{> features}}{{> fixes}}`
