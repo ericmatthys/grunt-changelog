@@ -48,6 +48,18 @@ module.exports = function (grunt) {
         }
       },
 
+      formatting_options_specialchars: {
+        options: {
+          log: 'test/fixtures/log_specialchars',
+          dest: 'tmp/changelog_formatting_specialchars',
+
+          partials: {
+            feature: '{{{this}}}\n',
+            fix: '{{{this}}}\n'
+          }
+        }
+      },
+
       regex_options: {
         options: {
           log: 'test/fixtures/log',
