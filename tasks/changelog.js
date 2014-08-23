@@ -34,8 +34,6 @@ module.exports = function (grunt) {
       empty: '  (none)\n'
     }, options.partials);
 
-    var after;
-    var before;
     var isDateRange;
 
     // Determine if a date or a commit sha / tag was provided for the after
