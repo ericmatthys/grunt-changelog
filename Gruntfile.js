@@ -94,7 +94,52 @@ module.exports = function (grunt) {
           dest: 'tmp/changelog_append',
           insertType: 'append'
         }
+      },
+
+      file_header: {
+        options: {
+          log: 'test/fixtures/log',
+          dest: 'tmp/changelog_fileHeader',
+          fileHeader: '# Changelog'
+        }
+      },
+
+      file_header_prepend_prime: {
+        options: {
+          log: 'test/fixtures/log',
+          dest: 'tmp/changelog_fileHeader_prepend',
+          insertType: 'prepend',
+          fileHeader: '# Changelog'
+        }
+      },
+
+      file_header_prepend: {
+        options: {
+          log: 'test/fixtures/log_insert_type',
+          dest: 'tmp/changelog_fileHeader_prepend',
+          insertType: 'prepend',
+          fileHeader: '# Changelog'
+        }
+      },
+
+      file_header_append_prime: {
+        options: {
+          log: 'test/fixtures/log',
+          dest: 'tmp/changelog_fileHeader_append',
+          insertType: 'append',
+          fileHeader: '# Changelog'
+        }
+      },
+
+      file_header_append: {
+        options: {
+          log: 'test/fixtures/log_insert_type',
+          dest: 'tmp/changelog_fileHeader_append',
+          insertType: 'append',
+          fileHeader: '# Changelog'
+        }
       }
+
     },
 
     nodeunit: {
