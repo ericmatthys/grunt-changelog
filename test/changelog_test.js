@@ -82,4 +82,14 @@ exports.changelog = {
 
     test.done();
   },
+
+  specialchars: function (test) {
+    test.expect(1);
+
+    var actual = grunt.file.read('tmp/changelog_formatting_specialchars');
+    var expected = grunt.file.read('test/expected/specialchars');
+    test.equal(actual, expected, 'Special chars shouldn’t be replaced by HTML entities.');
+
+    test.done();
+  },
 };
