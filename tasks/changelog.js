@@ -38,24 +38,27 @@ module.exports = function (grunt) {
 
     // Determine if a date or a commit sha / tag was provided for the after
     // option. This will determine what kind of range we need to use.
-    if (options.after) {
-      after = moment(options.after);
-      isDateRange = after.isValid();
+    var commit = options.commit;
+    if (!commit) {
+      if (options.after) {
+        after = moment(options.after);
+        isDateRange = after.isValid();
 
-      // Fallback to the provided after value if it is not a valid date. This
-      // likely means that a commit sha or tag is being used.
-      if (!isDateRange)
-        after = options.after;
-    } else {
-      // If no after option is provided, default to using the last week.
-      after = moment().subtract('days', 7);
-      isDateRange = true;
-    }
+        // Fallback to the provided after value if it is not a valid date. This
+        // likely means that a commit sha or tag is being used.
+        if (!isDateRange)
+          after = options.after;
+      } else {
+        // If no after option is provided, default to using the last week.
+        after = moment().subtract('days', 7);
+        isDateRange = true;
+      }
 
-    if (isDateRange) {
-      before = options.before ? moment(options.before) : moment();
-    } else {
-      before = options.before ? options.before : 'HEAD';
+      if (isDateRange) {
+        before = options.before ? moment(options.before) : moment();
+      } else {
+        before = options.before ? options.before : 'HEAD';
+      }
     }
 
     // Compile and register our templates and partials.
@@ -152,7 +155,12 @@ module.exports = function (grunt) {
       args.push('--after="' + after.format() + '"');
       args.push('--before="' + before.format() + '"');
     } else {
-      args.splice(1, 0, after + '..' + before);
+      if (commit) {
+        args.splice(1, 0, commit);
+      }
+      else {
+        args.splice(1, 0, after + '..' + before);
+      }
     }
 
     grunt.verbose.writeln('git ' + args.join(' '));

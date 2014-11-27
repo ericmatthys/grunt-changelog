@@ -106,6 +106,12 @@ module.exports = function (grunt) {
           dest: 'tmp/changelog_append',
           insertType: 'append'
         }
+      },
+
+      initial_commit : {
+        options: {
+          commit: '0c3208b2bd268facec69eb5f1907a1f4a23c0d9f'
+        }
       }
     },
 
