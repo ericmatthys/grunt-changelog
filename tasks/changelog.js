@@ -38,9 +38,10 @@ module.exports = function (grunt) {
 
     // Determine if a date or a commit sha / tag was provided for the after
     // option. This will determine what kind of range we need to use.
-    var commit = options.commit;
-    if (!commit) {
-      if (options.after) {
+    if (options.after) {
+      if (options.after == 'commit') {
+        commmit = options.before;
+      } else {
         after = moment(options.after);
         isDateRange = after.isValid();
 
@@ -48,17 +49,17 @@ module.exports = function (grunt) {
         // likely means that a commit sha or tag is being used.
         if (!isDateRange)
           after = options.after;
-      } else {
-        // If no after option is provided, default to using the last week.
-        after = moment().subtract('days', 7);
-        isDateRange = true;
       }
+    } else {
+      // If no after option is provided, default to using the last week.
+      after = moment().subtract('days', 7);
+      isDateRange = true;
+    }
 
-      if (isDateRange) {
-        before = options.before ? moment(options.before) : moment();
-      } else {
-        before = options.before ? options.before : 'HEAD';
-      }
+    if (isDateRange) {
+      before = options.before ? moment(options.before) : moment();
+    } else {
+      before = options.before ? options.before : 'HEAD';
     }
 
     // Compile and register our templates and partials.
