@@ -20,8 +20,8 @@
       "url": "https://github.com/ericmatthys/grunt-changelog/blob/master/LICENSE-MIT"
     }
   ],
-  "main": "Gruntfile.js",
-    "engines": {
+  "main": "tasks/changelog.js",
+  "engines": {
     "node": ">= 0.8.0"
   },
   "scripts": {
