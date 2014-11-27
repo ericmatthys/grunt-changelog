@@ -41,7 +41,7 @@ module.exports = function (grunt) {
     // option. This will determine what kind of range we need to use.
     if (options.after) {
       if (options.after == 'commit') {
-        commmit = options.before;
+        commit = options.before;
       } else {
         after = moment(options.after);
         isDateRange = after.isValid();
