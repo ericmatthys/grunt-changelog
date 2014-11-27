@@ -144,7 +144,7 @@ module.exports = function (grunt) {
     // Build our options for the git log command. Only print the commit message.
     var args = [
       'log',
-      '--pretty=format:%s',
+      '--pretty=format:%B',
       '--no-merges'
     ];
 
@@ -170,6 +170,8 @@ module.exports = function (grunt) {
           return done(false);
         }
 
+        // get rid of empty lines in the log
+        result = result.toString().replace(/\n\n/gm, '\n');
         writeChangelog(getChangelog(result));
         done();
       }
