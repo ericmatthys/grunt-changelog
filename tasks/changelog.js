@@ -111,9 +111,11 @@ module.exports = function (grunt) {
       };
 
       var collectedChanges = {};
+
       var lines = log.split('\n');
+
       for (var index = 0; index < lines.length; index++) {
-        var line = lines[index];
+        var line = lines[index].trim();
         for (var key in sections.regex) {
           var change = getChange(line, sections.regex[key]);
           if (change) {
