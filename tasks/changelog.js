@@ -44,8 +44,8 @@ module.exports = function (grunt) {
   grunt.registerMultiTask('changelog', 'Generate a changelog based on commit messages.', function (after, before) {
     // Merge task-specific and/or target-specific options with these defaults.
     var options = this.options({
-      featureRegex: /^(.*)closes #\d+:?(.*)$/gim,
-      fixRegex: /^(.*)fixes #\d+:?(.*)$/gim,
+      featureRegex: /^(.*)closes #\d+:?(.*)$/i,
+      fixRegex: /^(.*)fixes #\d+:?(.*)$/i,
       dest: 'changelog.txt',
       template: '{{> features}}{{> fixes}}',
       after: after,
@@ -90,23 +90,17 @@ module.exports = function (grunt) {
 
     grunt.verbose.writeflags(options, 'Options');
 
-    // Loop through each match and build the array of changes that will be
-    // passed to the template.
-    function getChanges(log, regex) {
-      var changes = [];
-      var match;
-
-      while ((match = regex.exec(log))) {
-        var change = '';
-
+    // Apply the specified regex to each line and return the change or null whether we have no match
+    function getChange(line, regex) {
+      var result = null;
+      var match = regex.exec(line);
+      if (match) {
+        result = '';
         for (var i = 1, len = match.length; i < len; i++) {
-          change += match[i];
+          result += match[i];
         }
-
-        changes.push(change.trim());
       }
-
-      return changes;
+      return result;
     }
 
     // Generate the changelog using the templates defined in options.
@@ -116,9 +110,23 @@ module.exports = function (grunt) {
         date: moment().format('YYYY-MM-DD')
       };
 
-      for (var key in sections.regex) {
-        data[key] = getChanges(log, sections.regex[key]);
+      var collectedChanges = {};
+      var lines = log.split('\n');
+      for (var index = 0; index < lines.length; index++) {
+        var line = lines[index];
+        for (var key in sections.regex) {
+          var change = getChange(line, sections.regex[key]);
+          if (change) {
+            if (!collectedChanges[key]) {
+                collectedChanges[key] = [];
+            }
+            collectedChanges[key].push(change);
+            break;
+          }
+        }
       }
+
+      _.extend(data, collectedChanges);
 
       return template(data);
     }
@@ -196,6 +204,8 @@ module.exports = function (grunt) {
           return done(false);
         }
 
+        // get rid of empty lines in the log
+        result = result.toString().replace(/\n\n/gm, '\n');
         writeChangelog(getChangelog(result));
         done();
       }
