@@ -99,9 +99,15 @@ module.exports = function (grunt) {
 
     // Write the changelog to the destination file.
     function writeChangelog(changelog) {
+      var fileContents = null;
+      var firstLineFile = null;
+      var firstLineFileHeader = null;
+      var regex = null;
 
       if (options.insertType && grunt.file.exists(options.dest)) {
-        var fileContents = grunt.file.read(options.dest);
+        fileContents = grunt.file.read(options.dest);
+        firstLineFile = fileContents.split('\n')[0];
+        grunt.log.debug('firstLineFile = ' + firstLineFile);
 
         switch (options.insertType) {
           case 'prepend':
@@ -115,6 +121,28 @@ module.exports = function (grunt) {
             return false;
         }
       }
+
+      if (options.fileHeader) {
+        firstLineFileHeader = options.fileHeader.split('\n')[0];
+        grunt.log.debug('firstLineFileHeader = ' + firstLineFileHeader);
+
+        if (options.insertType === 'prepend') {
+          if (firstLineFile !== firstLineFileHeader) {
+            changelog = options.fileHeader + '\n\n' + changelog;
+          } else {
+            regex = new RegExp(options.fileHeader+'\n\n','m');
+            changelog = options.fileHeader + '\n\n' + changelog.replace(regex, '');
+          }
+
+        // insertType === 'append' || undefined
+        } else {
+          if (firstLineFile !== firstLineFileHeader) {
+            changelog = options.fileHeader + '\n\n' + changelog;
+          }
+        }
+
+      }
+
 
       grunt.file.write(options.dest, changelog);
 

@@ -125,12 +125,57 @@ module.exports = function (grunt) {
             feature: '- {{this}} {{this.date}}\n'
           }
         }
+      },
+
+      file_header: {
+        options: {
+          log: 'test/fixtures/log',
+          dest: 'tmp/changelog_fileHeader',
+          fileHeader: '# Changelog'
+        }
+      },
+
+      file_header_prepend_prime: {
+        options: {
+          log: 'test/fixtures/log',
+          dest: 'tmp/changelog_fileHeader_prepend',
+          insertType: 'prepend',
+          fileHeader: '# Changelog'
+        }
+      },
+
+      file_header_prepend: {
+        options: {
+          log: 'test/fixtures/log_insert_type',
+          dest: 'tmp/changelog_fileHeader_prepend',
+          insertType: 'prepend',
+          fileHeader: '# Changelog'
+        }
+      },
+
+      file_header_append_prime: {
+        options: {
+          log: 'test/fixtures/log',
+          dest: 'tmp/changelog_fileHeader_append',
+          insertType: 'append',
+          fileHeader: '# Changelog'
+        }
+      },
+
+      file_header_append: {
+        options: {
+          log: 'test/fixtures/log_insert_type',
+          dest: 'tmp/changelog_fileHeader_append',
+          insertType: 'append',
+          fileHeader: '# Changelog'
+        }
       }
     },
 
     nodeunit: {
-      tests: ['test/*_test.js'],
+      tests: ['test/*_test.js']
     }
+
   });
 
   grunt.loadTasks('tasks');

@@ -49,6 +49,12 @@ FIXES:
 
 ### Options
 
+####options.fileHeader
+Type: `String`
+Default value: `undefined `
+
+The string will be placed on top of the changelog. 
+
 #### options.after
 Type: `String`
 Default value: `7 days ago`
@@ -161,6 +167,38 @@ FIXES:
   - Fix 1
   - Fix 2
 ```
+
+#### File header
+This examples uses the option `fileHeader` to prepend a custom string to the changelog.
+
+```js
+grunt.initConfig({
+  changelog: {
+    sample: {
+      options: {
+       fileHeader: '# Changelog'
+      }
+    }
+  },
+})
+```
+
+changelog.txt
+```
+# Changelog
+
+NEW:
+
+  - Feature 1
+  - Feature 2
+  - Feature 3
+
+FIXES:
+
+  - Fix 1
+  - Fix 2
+```
+
 
 #### Custom Range
 In this example, a custom date range is used to only show changes between March 1st and March 14th.

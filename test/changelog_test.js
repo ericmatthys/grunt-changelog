@@ -102,4 +102,35 @@ exports.changelog = {
 
     test.done();
   },
+
+  fileHeader: function (test) {
+    test.expect(1);
+
+    var actual = grunt.file.read('tmp/changelog_fileHeader');
+    var expected = grunt.file.read('test/expected/fileHeader');
+    test.equal(actual, expected, 'The file header should be added on top of the file.');
+
+    test.done();
+  },
+
+  fileHeader_prepend: function (test) {
+    test.expect(1);
+
+    var actual = grunt.file.read('tmp/changelog_fileHeader_prepend');
+    var expected = grunt.file.read('test/expected/fileHeader_prepend');
+    test.equal(actual, expected, 'The file header should be added on top of the file.');
+
+    test.done();
+  },
+
+  fileHeader_append: function (test) {
+    test.expect(1);
+
+    var actual = grunt.file.read('tmp/changelog_fileHeader_append');
+    var expected = grunt.file.read('test/expected/fileHeader_append');
+    test.equal(actual, expected, 'The file header should be added on top of the file.');
+
+    test.done();
+  }
+
 };
