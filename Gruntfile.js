@@ -8,6 +8,14 @@
 
 'use strict';
 
+
+function changelogBuildPartial(collectionName, entryName, title) {
+
+    return "{{#if " + collectionName + "}}" + title + ":\n\n" +
+           "{{#each " + collectionName + "}}{{> " + entryName + "}}" +
+           "{{/each}}\n{{/if}}";
+}
+
 module.exports = function (grunt) {
   grunt.initConfig({
     jshint: {
@@ -119,10 +127,33 @@ module.exports = function (grunt) {
           template: '[date]\n\n{{> features}}',
           after: '2014-04-08',
           before: '2014-08-21',
-          featureRegex: /^(.*)$/gim,
+          featureRegex: /^(.*)$/i,
           partials: {
             features: '{{#if features}}{{#each features}}{{> feature}}{{/each}}{{else}}{{> empty}}{{/if}}\n',
             feature: '- {{this}} {{this.date}}\n'
+          }
+        }
+      },
+
+      custom_sections: {
+        options: {
+          dest: 'tmp/changelog_customSections',
+          log: 'test/fixtures/log_customSections',
+          template : 'Release vX.X.X ([date])\n\n{{> features }}{{> fixes }}{{> apichanges }}{{> deprecations }}{{> others }}',
+          partials: {
+            apichanges: changelogBuildPartial('apichanges', 'entry', 'API Changes'),
+            deprecations: changelogBuildPartial('deprecations', 'entry', 'Deprecated'),
+            features: changelogBuildPartial('features', 'entry', 'New Features'),
+            fixes: changelogBuildPartial('fixes', 'entry', 'Bug Fixes'),
+            others: changelogBuildPartial('others', 'entry', 'Miscellaneous'),
+            entry: ' - {{this}}\n'
+          },
+          sections: {
+            apichanges: /^\s*- changed (#\d+):?(.*)$/i,
+            deprecations: /^\s*- deprecated (#\d+):?(.*)$/i,
+            features: /^\s*- feature (#\d+):?(.*)$/i,
+            fixes: /^\s*- fixes (#\d+):?(.*)$/i,
+            others: /^\s*- (.*)$/
           }
         }
       }

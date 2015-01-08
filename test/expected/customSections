@@ -1,0 +1,27 @@
+Release vX.X.X ([date])
+
+New Features:
+
+ - #2 additional helpers are now available
+
+Bug Fixes:
+
+ - #3 no longer recurses on rm -Rf .*
+
+API Changes:
+
+ - #1 new declarative API now in place
+
+Deprecated:
+
+ - #1 foo.bar
+
+Miscellaneous:
+
+ - cleaned up Gruntfile and integrated coffee-coverage
+ - updated readme and provided a simple example for Node - Javascript
+ - updated changelog
+ - implemented first batch of missing tests
+ - code cleanup
+ - importing existing sources
+
