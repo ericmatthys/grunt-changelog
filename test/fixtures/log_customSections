@@ -1,0 +1,60 @@
+bumped version to 0.1.2
+
+updated changelog
+
+bumped version to 0.1.1
+
+added missing dev dependencies, removed unused dependencies
+
+Merge branch 'master' of github.com:vibejs/vibejs-dynclass
+
+- fixes #3: no longer recurses on rm -Rf .*
+updated changelog
+
+updated changelog
+
+added missing clean target
+
+disabling callback tests for now
+
+- changed #1: new declarative API now in place
+- deprecated #1: foo.bar
+- feature #2: additional helpers are now available
+- cleaned up Gruntfile and integrated coffee-coverage
+
+outcommented failing assertions until implemented
+removed window as a possible target as the tests will always be run against a node environment
+
+removed extraneous gibberish from comment
+now using __hasOwnProperty instead of klass...
+
+bumped version to 0.1.0
+
+continued work on feature #1
+even more tests
+
+better error handling
+[ci skip]
+
+Merge branch 'master' into dev-0.1.0
+
+update readme
+[ci skip]
+
+Merge branch 'master' into dev-0.1.0
+
+Update README.md
+still missing tests for the new feature
+
+committing initial work on new api
+
+- updated readme and provided a simple example for Node - Javascript
+[ci skip]
+
+- updated changelog
+
+- implemented first batch of missing tests
+- code cleanup
+
+- importing existing sources
+
