@@ -28,9 +28,9 @@ module.exports = function (grunt) {
     // without having to provide every single partial.
     var partials = _.extend({
       features: 'NEW:\n\n{{#if features}}{{#each features}}{{> feature}}{{/each}}{{else}}{{> empty}}{{/if}}\n',
-      feature: '  - {{this}}\n',
+      feature: '  - {{{this}}}\n',
       fixes: 'FIXES:\n\n{{#if fixes}}{{#each fixes}}{{> fix}}{{/each}}{{else}}{{> empty}}{{/if}}',
-      fix: '  - {{this}}\n',
+      fix: '  - {{{this}}}\n',
       empty: '  (none)\n'
     }, options.partials);
 
@@ -141,12 +141,18 @@ module.exports = function (grunt) {
 
     var done = this.async();
 
-    // Build our options for the git log command. Only print the commit message.
-    var args = [
-      'log',
-      '--pretty=format:%s',
-      '--no-merges'
-    ];
+    // Build our options for the git log command.
+    // Default: Only print the commit message.
+    var args = ['log'];
+
+    if (options.logArguments) {
+      args.push.apply(args, options.logArguments);
+    } else {
+      args.push(
+        '--pretty=format:%s',
+        '--no-merges'
+      );
+    }
 
     if (isDateRange) {
       args.push('--after="' + after.format() + '"');

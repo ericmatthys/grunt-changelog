@@ -83,6 +83,16 @@ exports.changelog = {
     test.done();
   },
 
+  logArguments: function (test) {
+    test.expect(1);
+
+    var actual = grunt.file.read('tmp/changelog_logArguments');
+    var expected = grunt.file.read('test/expected/logArguments');
+    test.equal(actual, expected, 'The commit messages should have a custom format defined by log arguments.');
+
+    test.done();
+  },
+
   specialchars: function (test) {
     test.expect(1);
 

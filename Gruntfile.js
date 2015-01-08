@@ -106,6 +106,25 @@ module.exports = function (grunt) {
           dest: 'tmp/changelog_append',
           insertType: 'append'
         }
+      },
+
+      log_arguments: {
+        options: {
+          logArguments: [
+            '--pretty=* %h - %ad: %s',
+            '--no-merges',
+            '--date=short'
+          ],
+          dest: 'tmp/changelog_logArguments',
+          template: '[date]\n\n{{> features}}',
+          after: '2014-04-08',
+          before: '2014-08-21',
+          featureRegex: /^(.*)$/gim,
+          partials: {
+            features: '{{#if features}}{{#each features}}{{> feature}}{{/each}}{{else}}{{> empty}}{{/if}}\n',
+            feature: '- {{this}} {{this.date}}\n'
+          }
+        }
       }
     },
 

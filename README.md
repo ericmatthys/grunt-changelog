@@ -105,11 +105,9 @@ The Handlebars partial used for the list of features.
 
 #### options.partials.feature
 Type: `String`
-Default value: `'  - {{this}}\n'`
+Default value: `'  - {{{this}}}\n'`
 
 The Handlebars partial used for each individual feature.
-
-*Please note that you should use the "triple-stash" `{{{`, if you don't want Handlebars to escape special characters like `&`, `<`, `>`, `"`, `'`, `` ` `` which might be existing in your commit messages. See [here](http://handlebarsjs.com/#html-escaping) and [here](http://handlebarsjs.com/util.html#utils-escapeExpression).*
 
 #### options.partials.fixes
 Type: `String`
@@ -119,9 +117,7 @@ The Handlebars partial used for the list of fixes.
 
 #### options.partials.fix
 Type: `String`
-Default value: `'  - {{this}}\n'`
-
-*Please note that you should use the "triple-stash" `{{{`, if you don't want Handlebars to escape special characters like `&`, `<`, `>`, `"`, `'`, `` ` `` which might be existing in your commit messages. See [here](http://handlebarsjs.com/#html-escaping) and [here](http://handlebarsjs.com/util.html#utils-escapeExpression).*
+Default value: `'  - {{{this}}}\n'`
 
 The Handlebars partial used for each individual fix.
 
@@ -130,6 +126,12 @@ Type: `String`
 Default value: `'  (none)\n'`
 
 The Handlebars partial used by features or fixes when there are no changes.
+
+#### options.logArguments
+Type: `Array`
+Default value: `['--pretty=format:%s', '--no-merges']`
+
+See <http://git-scm.com/book/en/Git-Basics-Viewing-the-Commit-History>
 
 ### Usage Examples
 
@@ -268,6 +270,40 @@ release-notes/1.0.0.txt
 [NEW] Feature 3
 [FIX] Fix 1
 [FIX] Fix 2
+```
+
+#### Custom `git log` arguments
+
+The following example generates a simple changelog without separation of Commit types.
+
+```js
+grunt.initConfig({
+  changelog: {
+    sample: {
+      options: {
+        logArguments: [
+          '--pretty=* %h - %ad: %s',
+          '--no-merges',
+          '--date=short'
+        ],
+        template: '{{> features}}',
+        featureRegex: /^(.*)$/gim,
+        partials: {
+          features: '{{#if features}}{{#each features}}{{> feature}}{{/each}}{{else}}{{> empty}}{{/if}}\n',
+          feature: '- {{this}} {{this.date}}\n'
+        }
+      }
+    }
+  },
+})
+```
+
+changelog.txt
+
+```
+* c0d309b - 2014-08-20: Fix typo in readme. 
+* 7d84867 - 2014-04-11: Bumped to 0.2.2 
+* 2280e9c - 2014-04-07: Optionally prepend or append the changelog.  Fixes #5
 ```
 
 ## Contributing
