@@ -141,12 +141,18 @@ module.exports = function (grunt) {
 
     var done = this.async();
 
-    // Build our options for the git log command. Only print the commit message.
-    var args = [
-      'log',
-      '--pretty=format:%s',
-      '--no-merges'
-    ];
+    // Build our options for the git log command.
+    // Default: Only print the commit message.
+    var args = ['log'];
+
+    if (options.logArguments) {
+      args.push.apply(args, options.logArguments);
+    } else {
+      args.push(
+        '--pretty=format:%s',
+        '--no-merges'
+      );
+    }
 
     if (isDateRange) {
       args.push('--after="' + after.format() + '"');
