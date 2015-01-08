@@ -105,11 +105,9 @@ The Handlebars partial used for the list of features.
 
 #### options.partials.feature
 Type: `String`
-Default value: `'  - {{this}}\n'`
+Default value: `'  - {{{this}}}\n'`
 
 The Handlebars partial used for each individual feature.
-
-*Please note that you should use the "triple-stash" `{{{`, if you don't want Handlebars to escape special characters like `&`, `<`, `>`, `"`, `'`, `` ` `` which might be existing in your commit messages. See [here](http://handlebarsjs.com/#html-escaping) and [here](http://handlebarsjs.com/util.html#utils-escapeExpression).*
 
 #### options.partials.fixes
 Type: `String`
@@ -119,9 +117,7 @@ The Handlebars partial used for the list of fixes.
 
 #### options.partials.fix
 Type: `String`
-Default value: `'  - {{this}}\n'`
-
-*Please note that you should use the "triple-stash" `{{{`, if you don't want Handlebars to escape special characters like `&`, `<`, `>`, `"`, `'`, `` ` `` which might be existing in your commit messages. See [here](http://handlebarsjs.com/#html-escaping) and [here](http://handlebarsjs.com/util.html#utils-escapeExpression).*
+Default value: `'  - {{{this}}}\n'`
 
 The Handlebars partial used for each individual fix.
 

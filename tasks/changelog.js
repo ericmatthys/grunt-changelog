@@ -28,9 +28,9 @@ module.exports = function (grunt) {
     // without having to provide every single partial.
     var partials = _.extend({
       features: 'NEW:\n\n{{#if features}}{{#each features}}{{> feature}}{{/each}}{{else}}{{> empty}}{{/if}}\n',
-      feature: '  - {{this}}\n',
+      feature: '  - {{{this}}}\n',
       fixes: 'FIXES:\n\n{{#if fixes}}{{#each fixes}}{{> fix}}{{/each}}{{else}}{{> empty}}{{/if}}',
-      fix: '  - {{this}}\n',
+      fix: '  - {{{this}}}\n',
       empty: '  (none)\n'
     }, options.partials);
 
