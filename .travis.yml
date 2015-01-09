@@ -5,3 +5,4 @@ node_js:
 before_install:
   - currentfolder=${PWD##*/}
   - if [ "$currentfolder" != 'grunt-changelog' ]; then cd .. && eval "mv $currentfolder grunt-changelog" && cd grunt-changelog; fi
+  - npm install -g grunt-cli
