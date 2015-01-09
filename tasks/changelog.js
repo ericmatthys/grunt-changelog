@@ -8,6 +8,36 @@
 
 'use strict';
 
+
+
+
+function configureSections(options, sections, _) {
+
+  sections.regex = {};
+  if (options.featureRegex) {
+    _.extend(sections.regex, {features: options.featureRegex});
+  }
+
+  if (options.fixRegex) {
+    _.extend(sections.regex, {fixes: options.fixRegex});
+  }
+
+  if (options.sections) {
+    _.extend(sections.regex, options.sections);
+  }
+
+  // Extend partials separately so only one custom partial can be specified
+  // without having to provide every single partial.
+  sections.partials = _.extend({
+    features: 'NEW:\n\n{{#if features}}{{#each features}}{{> feature}}{{/each}}{{else}}{{> empty}}{{/if}}\n',
+    feature: '  - {{{this}}}\n',
+    fixes: 'FIXES:\n\n{{#if fixes}}{{#each fixes}}{{> fix}}{{/each}}{{else}}{{> empty}}{{/if}}',
+    fix: '  - {{{this}}}\n',
+    empty: '  (none)\n'
+  }, options.partials);
+}
+
+
 module.exports = function (grunt) {
   var _ = require('underscore');
   var Handlebars = require('handlebars');
@@ -16,23 +46,17 @@ module.exports = function (grunt) {
   grunt.registerMultiTask('changelog', 'Generate a changelog based on commit messages.', function (after, before) {
     // Merge task-specific and/or target-specific options with these defaults.
     var options = this.options({
-      featureRegex: /^(.*)closes #\d+:?(.*)$/gim,
-      fixRegex: /^(.*)fixes #\d+:?(.*)$/gim,
+      featureRegex: /^(.*)closes #\d+:?(.*)$/i,
+      fixRegex: /^(.*)fixes #\d+:?(.*)$/i,
       dest: 'changelog.txt',
       template: '{{> features}}{{> fixes}}',
       after: after,
       before: before
     });
 
-    // Extend partials separately so only one custom partial can be specified
-    // without having to provide every single partial.
-    var partials = _.extend({
-      features: 'NEW:\n\n{{#if features}}{{#each features}}{{> feature}}{{/each}}{{else}}{{> empty}}{{/if}}\n',
-      feature: '  - {{this}}\n',
-      fixes: 'FIXES:\n\n{{#if fixes}}{{#each fixes}}{{> fix}}{{/each}}{{else}}{{> empty}}{{/if}}',
-      fix: '  - {{this}}\n',
-      empty: '  (none)\n'
-    }, options.partials);
+    var sections = {};
+    configureSections(options, sections, _);
+    grunt.verbose.writeflags(sections, 'Sections');
 
     var isDateRange;
 
@@ -61,38 +85,54 @@ module.exports = function (grunt) {
     // Compile and register our templates and partials.
     var template = Handlebars.compile(options.template);
 
+    var partials = sections.partials;
     for (var key in partials) {
       Handlebars.registerPartial(key, Handlebars.compile(partials[key]));
     }
 
     grunt.verbose.writeflags(options, 'Options');
 
-    // Loop through each match and build the array of changes that will be
-    // passed to the template.
-    function getChanges(log, regex) {
-      var changes = [];
-      var match;
-
-      while ((match = regex.exec(log))) {
-        var change = '';
-
+    // Apply the specified regex to each line and return the change or null whether we have no match
+    function getChange(line, regex) {
+      var result = null;
+      var match = regex.exec(line);
+      if (match) {
+        result = '';
         for (var i = 1, len = match.length; i < len; i++) {
-          change += match[i];
+          result += match[i];
         }
-
-        changes.push(change.trim());
+        result = result.trim();
+        grunt.verbose.writeln('"' + result + '"');
       }
-
-      return changes;
+      return result;
     }
 
     // Generate the changelog using the templates defined in options.
     function getChangelog(log) {
+
       var data = {
-        date: moment().format('YYYY-MM-DD'),
-        features: getChanges(log, options.featureRegex),
-        fixes: getChanges(log, options.fixRegex)
+        date: moment().format('YYYY-MM-DD')
       };
+
+      var collectedChanges = {};
+
+      var lines = log.split('\n');
+
+      for (var index = 0; index < lines.length; index++) {
+        var line = lines[index].trim();
+        for (var key in sections.regex) {
+          var change = getChange(line, sections.regex[key]);
+          if (change) {
+            if (!collectedChanges[key]) {
+                collectedChanges[key] = [];
+            }
+            collectedChanges[key].push(change);
+            break;
+          }
+        }
+      }
+
+      _.extend(data, collectedChanges);
 
       return template(data);
     }
@@ -134,6 +174,8 @@ module.exports = function (grunt) {
       }
 
       var result = grunt.file.read(options.log);
+      // get rid of empty lines in the log
+      result = result.toString().replace(/\n\n/gm, '\n');
       writeChangelog(getChangelog(result));
 
       return;
@@ -141,12 +183,18 @@ module.exports = function (grunt) {
 
     var done = this.async();
 
-    // Build our options for the git log command. Only print the commit message.
-    var args = [
-      'log',
-      '--pretty=format:%s',
-      '--no-merges'
-    ];
+    // Build our options for the git log command.
+    // Default: Only print the commit message.
+    var args = ['log'];
+
+    if (options.logArguments) {
+      args.push.apply(args, options.logArguments);
+    } else {
+      args.push(
+        '--pretty=format:%s',
+        '--no-merges'
+      );
+    }
 
     if (isDateRange) {
       args.push('--after="' + after.format() + '"');
@@ -170,6 +218,8 @@ module.exports = function (grunt) {
           return done(false);
         }
 
+        // get rid of empty lines in the log
+        result = result.toString().replace(/\n\n/gm, '\n');
         writeChangelog(getChangelog(result));
         done();
       }

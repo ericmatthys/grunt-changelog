@@ -83,12 +83,32 @@ exports.changelog = {
     test.done();
   },
 
+  logArguments: function (test) {
+    test.expect(1);
+
+    var actual = grunt.file.read('tmp/changelog_logArguments');
+    var expected = grunt.file.read('test/expected/logArguments');
+    test.equal(actual, expected, 'The commit messages should have a custom format defined by log arguments.');
+
+    test.done();
+  },
+
   specialchars: function (test) {
     test.expect(1);
 
     var actual = grunt.file.read('tmp/changelog_formatting_specialchars');
     var expected = grunt.file.read('test/expected/specialchars');
     test.equal(actual, expected, 'Special chars shouldn’t be replaced by HTML entities.');
+
+    test.done();
+  },
+
+  customSections: function (test) {
+    test.expect(1);
+
+    var actual = grunt.file.read('tmp/changelog_customSections');
+    var expected = grunt.file.read('test/expected/customSections');
+    test.equal(actual, expected, 'The commit messages should have custom sections.');
 
     test.done();
   },
