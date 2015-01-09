@@ -1,6 +1,6 @@
-# grunt-changelog
+[![Build Status](https://travis-ci.org/ericmatthys/grunt-changelog.svg)](https://travis-ci.org/ericmatthys/grunt-changelog) [![devDependency Status](https://david-dm.org/ericmatthys/grunt-changelog/dev-status.svg)](https://david-dm.org/ericmatthys/grunt-changelog#info=devDependencies)  [![Dependency Status](https://david-dm.org/ericmatthys/grunt-changelog/status.svg)](https://david-dm.org/ericmatthys/grunt-changelog#info=Dependencies) [![peerDependency Status](https://david-dm.org/ericmatthys/grunt-changelog/peer-status.svg)](https://david-dm.org/ericmatthys/grunt-changelog#info=peerDependencies)
 
->
+# grunt-changelog
 
 ## Getting Started
 This plugin requires Grunt `~0.4.0`
