@@ -1,7 +1,7 @@
 {
   "name": "grunt-changelog",
   "description": "Generate a changelog based on commit messages.",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "homepage": "https://github.com/ericmatthys/grunt-changelog",
   "author": {
     "name": "Eric Matthys",
