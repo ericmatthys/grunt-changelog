@@ -1,7 +1,7 @@
 {
   "name": "grunt-changelog",
   "description": "Generate a changelog based on commit messages.",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "homepage": "https://github.com/ericmatthys/grunt-changelog",
   "author": {
     "name": "Eric Matthys",
@@ -20,26 +20,22 @@
       "url": "https://github.com/ericmatthys/grunt-changelog/blob/master/LICENSE-MIT"
     }
   ],
-  "main": "Gruntfile.js",
-    "engines": {
-    "node": ">= 0.8.0"
-  },
   "scripts": {
     "test": "grunt test"
   },
   "dependencies": {
-    "underscore": "~1.6.0",
+    "underscore": "~1.7.0",
     "handlebars": "~2.0.0",
-    "moment": "~2.0.0"
+    "moment": "~2.9.0"
   },
   "devDependencies": {
-    "grunt-contrib-jshint": "~0.1.1",
-    "grunt-contrib-clean": "~0.4.0",
-    "grunt-contrib-nodeunit": "~0.1.2",
-    "grunt": "~0.4.0"
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-contrib-clean": "~0.6.0",
+    "grunt-contrib-nodeunit": "~0.4.1",
+    "grunt": "~0.4.5"
   },
   "peerDependencies": {
-    "grunt": "~0.4.0"
+    "grunt": "~0.4.5"
   },
   "keywords": [
     "gruntplugin",

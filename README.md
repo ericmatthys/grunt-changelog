@@ -1,6 +1,6 @@
-# grunt-changelog
+[![npm version](https://badge.fury.io/js/grunt-changelog.svg)](http://badge.fury.io/js/grunt-changelog) [![Build Status](https://travis-ci.org/ericmatthys/grunt-changelog.svg)](https://travis-ci.org/ericmatthys/grunt-changelog) [![devDependency Status](https://david-dm.org/ericmatthys/grunt-changelog/dev-status.svg)](https://david-dm.org/ericmatthys/grunt-changelog#info=devDependencies)  [![Dependency Status](https://david-dm.org/ericmatthys/grunt-changelog/status.svg)](https://david-dm.org/ericmatthys/grunt-changelog#info=Dependencies) [![peerDependency Status](https://david-dm.org/ericmatthys/grunt-changelog/peer-status.svg)](https://david-dm.org/ericmatthys/grunt-changelog#info=peerDependencies)
 
->
+# grunt-changelog
 
 ## Getting Started
 This plugin requires Grunt `~0.4.0`
@@ -48,6 +48,12 @@ FIXES:
 ```
 
 ### Options
+
+####options.fileHeader
+Type: `String`
+Default value: `undefined `
+
+The string will be placed on top of the changelog. 
 
 #### options.after
 Type: `String`
@@ -105,11 +111,9 @@ The Handlebars partial used for the list of features.
 
 #### options.partials.feature
 Type: `String`
-Default value: `'  - {{this}}\n'`
+Default value: `'  - {{{this}}}\n'`
 
 The Handlebars partial used for each individual feature.
-
-*Please note that you should use the "triple-stash" `{{{`, if you don't want Handlebars to escape special characters like `&`, `<`, `>`, `"`, `'`, `` ` `` which might be existing in your commit messages. See [here](http://handlebarsjs.com/#html-escaping) and [here](http://handlebarsjs.com/util.html#utils-escapeExpression).*
 
 #### options.partials.fixes
 Type: `String`
@@ -119,9 +123,7 @@ The Handlebars partial used for the list of fixes.
 
 #### options.partials.fix
 Type: `String`
-Default value: `'  - {{this}}\n'`
-
-*Please note that you should use the "triple-stash" `{{{`, if you don't want Handlebars to escape special characters like `&`, `<`, `>`, `"`, `'`, `` ` `` which might be existing in your commit messages. See [here](http://handlebarsjs.com/#html-escaping) and [here](http://handlebarsjs.com/util.html#utils-escapeExpression).*
+Default value: `'  - {{{this}}}\n'`
 
 The Handlebars partial used for each individual fix.
 
@@ -130,6 +132,12 @@ Type: `String`
 Default value: `'  (none)\n'`
 
 The Handlebars partial used by features or fixes when there are no changes.
+
+#### options.logArguments
+Type: `Array`
+Default value: `['--pretty=format:%s', '--no-merges']`
+
+See <http://git-scm.com/book/en/Git-Basics-Viewing-the-Commit-History>
 
 ### Usage Examples
 
@@ -159,6 +167,38 @@ FIXES:
   - Fix 1
   - Fix 2
 ```
+
+#### File header
+This examples uses the option `fileHeader` to prepend a custom string to the changelog.
+
+```js
+grunt.initConfig({
+  changelog: {
+    sample: {
+      options: {
+       fileHeader: '# Changelog'
+      }
+    }
+  },
+})
+```
+
+changelog.txt
+```
+# Changelog
+
+NEW:
+
+  - Feature 1
+  - Feature 2
+  - Feature 3
+
+FIXES:
+
+  - Fix 1
+  - Fix 2
+```
+
 
 #### Custom Range
 In this example, a custom date range is used to only show changes between March 1st and March 14th.
@@ -270,5 +310,45 @@ release-notes/1.0.0.txt
 [FIX] Fix 2
 ```
 
+#### Custom `git log` arguments
+
+The following example generates a simple changelog without separation of Commit types.
+
+```js
+grunt.initConfig({
+  changelog: {
+    sample: {
+      options: {
+        logArguments: [
+          '--pretty=* %h - %ad: %s',
+          '--no-merges',
+          '--date=short'
+        ],
+        template: '{{> features}}',
+        featureRegex: /^(.*)$/gim,
+        partials: {
+          features: '{{#if features}}{{#each features}}{{> feature}}{{/each}}{{else}}{{> empty}}{{/if}}\n',
+          feature: '- {{this}} {{this.date}}\n'
+        }
+      }
+    }
+  },
+})
+```
+
+changelog.txt
+
+```
+* c0d309b - 2014-08-20: Fix typo in readme. 
+* 7d84867 - 2014-04-11: Bumped to 0.2.2 
+* 2280e9c - 2014-04-07: Optionally prepend or append the changelog.  Fixes #5
+```
+
 ## Contributing
-In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
+
+Anyone and everyone is welcome to contribute. Please take a moment to
+review the [guidelines for contributing](CONTRIBUTING.md).
+
+* [Bug reports](CONTRIBUTING.md#bugs)
+* [Feature requests](CONTRIBUTING.md#features)
+* [Pull requests](CONTRIBUTING.md#pull-requests)

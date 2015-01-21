@@ -106,12 +106,76 @@ module.exports = function (grunt) {
           dest: 'tmp/changelog_append',
           insertType: 'append'
         }
+      },
+
+      log_arguments: {
+        options: {
+          logArguments: [
+            '--pretty=* %h - %ad: %s',
+            '--no-merges',
+            '--date=short'
+          ],
+          dest: 'tmp/changelog_logArguments',
+          template: '[date]\n\n{{> features}}',
+          after: '2014-04-08',
+          before: '2014-08-21',
+          featureRegex: /^(.*)$/gim,
+          partials: {
+            features: '{{#if features}}{{#each features}}{{> feature}}{{/each}}{{else}}{{> empty}}{{/if}}\n',
+            feature: '- {{this}} {{this.date}}\n'
+          }
+        }
+      },
+
+      file_header: {
+        options: {
+          log: 'test/fixtures/log',
+          dest: 'tmp/changelog_fileHeader',
+          fileHeader: '# Changelog'
+        }
+      },
+
+      file_header_prepend_prime: {
+        options: {
+          log: 'test/fixtures/log',
+          dest: 'tmp/changelog_fileHeader_prepend',
+          insertType: 'prepend',
+          fileHeader: '# Changelog'
+        }
+      },
+
+      file_header_prepend: {
+        options: {
+          log: 'test/fixtures/log_insert_type',
+          dest: 'tmp/changelog_fileHeader_prepend',
+          insertType: 'prepend',
+          fileHeader: '# Changelog'
+        }
+      },
+
+      file_header_append_prime: {
+        options: {
+          log: 'test/fixtures/log',
+          dest: 'tmp/changelog_fileHeader_append',
+          insertType: 'append',
+          fileHeader: '# Changelog'
+        }
+      },
+
+      file_header_append: {
+        options: {
+          log: 'test/fixtures/log_insert_type',
+          dest: 'tmp/changelog_fileHeader_append',
+          insertType: 'append',
+          fileHeader: '# Changelog'
+        }
       }
     },
 
     nodeunit: {
-      tests: ['test/*_test.js'],
+      tests: ['test/*_test.js']
     }
+
   });
 
   grunt.loadTasks('tasks');

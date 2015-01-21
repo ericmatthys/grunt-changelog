@@ -1,0 +1,6 @@
+[date]
+
+- * c0d309b - 2014-08-20: Fix typo in readme. 
+- * 7d84867 - 2014-04-11: Bumped to 0.2.2 
+- * 2280e9c - 2014-04-07: Optionally prepend or append the changelog.  Fixes #5 
+
