@@ -1,14 +1,76 @@
 /*
-* grunt-changelog
-* https://github.com/ericmatthys/grunt-changelog
-*
-* Copyright (c) 2013 Eric Matthys
-* Licensed under the MIT license.
-*/
+ * grunt-changelog
+ * https://github.com/ericmatthys/grunt-changelog
+ *
+ * Copyright (c) 2013 Eric Matthys
+ * Licensed under the MIT license.
+ */
 
 'use strict';
 
 
+function singleLineLogParser(log, sections) {
+
+    var result = {}; 
+
+    function getChange(line, regex) {
+      var result = '';
+      var match = regex.exec(line);
+
+      if (match) {
+        for (var i = 1, len = match.length; i < len; i++) {
+          result += match[i];
+        }
+      }
+
+      result = result.trim();
+      return result;
+    }   
+
+    var lines = log.split('\n');
+    for (var index = 0; index < lines.length; index++) {
+      for (var key in sections.regex) {
+        var change = getChange(line, sections.regex[key]);
+        if (!result[key]) {
+          result[key] = [];
+        }
+        result[key].push(change);
+      }
+    }   
+
+    return result;
+}
+
+
+function multiLineLogParser(log, sections) {
+
+    var result = {};
+
+    // Loop through each match and build the array of changes that will be
+    // passed to the template.
+    function getChanges(log, regex) {
+      var changes = [];
+      var match;
+
+      while (match = regex.exec(log)) {
+        var change = '';
+
+        for (var i = 1, len = match.length; i < len; i++) {
+          change += match[i];
+        }
+
+        changes.push(change.trim());
+      }
+
+      return changes;
+    }
+
+    for (var key in sections.regex) {
+      result[key] = getChanges(log, sections.regex[key]);
+    }
+
+    return result;
+}
 
 
 function configureSections(options, sections, _) {
@@ -51,7 +113,8 @@ module.exports = function (grunt) {
       dest: 'changelog.txt',
       template: '{{> features}}{{> fixes}}',
       after: after,
-      before: before
+      before: before,
+      multiline : true
     });
 
     var sections = {};
@@ -92,41 +155,19 @@ module.exports = function (grunt) {
 
     grunt.verbose.writeflags(options, 'Options');
 
-    // Loop through each match and build the array of changes that will be
-    // passed to the template.
-    function getChanges(log, regex) {
-      var changes = [];
-      var match;
-
-      while ((match = regex.exec(log))) {
-        var change = '';
-
-        for (var i = 1, len = match.length; i < len; i++) {
-          change += match[i];
-        }
-
-        changes.push(change.trim());
-      }
-
-      return changes;
+    // setup the log parser, defaulting to the standard multiLineParser
+    var logParser = multiLineLogParser;
+    if (!options.multiline) {
+      logParser = singleLineLogParser;
     }
 
-    // Generate the changelog using the templates defined in options.
+    // Prepare the template using the resolved log parser and generate the
+    // changelog using the templates defined in the options.
     function getChangelog(log) {
-
       var data = {
         date: moment().format('YYYY-MM-DD')
       };
-
-      var collectedChanges = {};
-
-      for (var key in sections.regex) {
-        var changes = getChanges(log, sections.regex[key]);
-        collectedChanges[key] = changes;
-      }
-
-      _.extend(data, collectedChanges);
-
+      _.extend(data, logParser(log, sections));
       return template(data);
     }
 
@@ -175,7 +216,6 @@ module.exports = function (grunt) {
         }
 
       }
-
 
       grunt.file.write(options.dest, changelog);
 
