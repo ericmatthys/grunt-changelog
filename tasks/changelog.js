@@ -12,6 +12,7 @@ module.exports = function (grunt) {
   var _ = require('underscore');
   var Handlebars = require('handlebars');
   var moment = require('moment');
+  var semver = require('semver');
 
   grunt.registerMultiTask('changelog', 'Generate a changelog based on commit messages.', function (after, before) {
     // Merge task-specific and/or target-specific options with these defaults.
@@ -39,8 +40,11 @@ module.exports = function (grunt) {
     // Determine if a date or a commit sha / tag was provided for the after
     // option. This will determine what kind of range we need to use.
     if (options.after) {
-      after = moment(options.after);
-      isDateRange = after.isValid();
+
+      if (!semver.valid(options.after)) {
+        after = moment(options.after);
+        isDateRange = after.isValid();
+      }
 
       // Fallback to the provided after value if it is not a valid date. This
       // likely means that a commit sha or tag is being used.
