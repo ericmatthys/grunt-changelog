@@ -174,8 +174,11 @@ module.exports = function (grunt) {
     var done = this.async();
 
     // Build our options for the git log command.
-    // Default: Only print the commit message.
-    var args = ['log'];
+    // Default: Only print the commit message without paging.
+    var args = [
+      '--no-pager',
+      'log'
+    ];
 
     if (options.logArguments) {
       args.push.apply(args, options.logArguments);
@@ -190,7 +193,7 @@ module.exports = function (grunt) {
       args.push('--after="' + after.format() + '"');
       args.push('--before="' + before.format() + '"');
     } else {
-      args.splice(1, 0, after + '..' + before);
+      args.splice(2, 0, after + '..' + before);
     }
 
     grunt.verbose.writeln('git ' + args.join(' '));
