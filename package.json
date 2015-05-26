@@ -24,9 +24,10 @@
     "test": "grunt test"
   },
   "dependencies": {
-    "underscore": "~1.7.0",
     "handlebars": "~2.0.0",
-    "moment": "~2.9.0"
+    "moment": "~2.9.0",
+    "semver": "^4.3.4",
+    "underscore": "~1.7.0"
   },
   "devDependencies": {
     "grunt-contrib-jshint": "~0.10.0",

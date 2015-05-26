@@ -12,6 +12,7 @@ module.exports = function (grunt) {
   var _ = require('underscore');
   var Handlebars = require('handlebars');
   var moment = require('moment');
+  var semver = require('semver');
 
   grunt.registerMultiTask('changelog', 'Generate a changelog based on commit messages.', function (after, before) {
     // Merge task-specific and/or target-specific options with these defaults.
@@ -39,8 +40,11 @@ module.exports = function (grunt) {
     // Determine if a date or a commit sha / tag was provided for the after
     // option. This will determine what kind of range we need to use.
     if (options.after) {
-      after = moment(options.after);
-      isDateRange = after.isValid();
+
+      if (!semver.valid(options.after)) {
+        after = moment(options.after);
+        isDateRange = after.isValid();
+      }
 
       // Fallback to the provided after value if it is not a valid date. This
       // likely means that a commit sha or tag is being used.
@@ -170,8 +174,11 @@ module.exports = function (grunt) {
     var done = this.async();
 
     // Build our options for the git log command.
-    // Default: Only print the commit message.
-    var args = ['log'];
+    // Default: Only print the commit message without paging.
+    var args = [
+      '--no-pager',
+      'log'
+    ];
 
     if (options.logArguments) {
       args.push.apply(args, options.logArguments);
@@ -186,7 +193,7 @@ module.exports = function (grunt) {
       args.push('--after="' + after.format() + '"');
       args.push('--before="' + before.format() + '"');
     } else {
-      args.splice(1, 0, after + '..' + before);
+      args.splice(2, 0, after + '..' + before);
     }
 
     grunt.verbose.writeln('git ' + args.join(' '));
