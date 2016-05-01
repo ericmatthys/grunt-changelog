@@ -8,6 +8,36 @@
 
 'use strict';
 
+
+
+
+function configureSections(options, sections, _) {
+
+  sections.regex = {};
+  if (options.featureRegex) {
+    _.extend(sections.regex, {features: options.featureRegex});
+  }
+
+  if (options.fixRegex) {
+    _.extend(sections.regex, {fixes: options.fixRegex});
+  }
+
+  if (options.sections) {
+    _.extend(sections.regex, options.sections);
+  }
+
+  // Extend partials separately so only one custom partial can be specified
+  // without having to provide every single partial.
+  sections.partials = _.extend({
+    features: 'NEW:\n\n{{#if features}}{{#each features}}{{> feature}}{{/each}}{{else}}{{> empty}}{{/if}}\n',
+    feature: '  - {{{this}}}\n',
+    fixes: 'FIXES:\n\n{{#if fixes}}{{#each fixes}}{{> fix}}{{/each}}{{else}}{{> empty}}{{/if}}',
+    fix: '  - {{{this}}}\n',
+    empty: '  (none)\n'
+  }, options.partials);
+}
+
+
 module.exports = function (grunt) {
   var _ = require('underscore');
   var Handlebars = require('handlebars');
@@ -25,15 +55,9 @@ module.exports = function (grunt) {
       before: before
     });
 
-    // Extend partials separately so only one custom partial can be specified
-    // without having to provide every single partial.
-    var partials = _.extend({
-      features: 'NEW:\n\n{{#if features}}{{#each features}}{{> feature}}{{/each}}{{else}}{{> empty}}{{/if}}\n',
-      feature: '  - {{{this}}}\n',
-      fixes: 'FIXES:\n\n{{#if fixes}}{{#each fixes}}{{> fix}}{{/each}}{{else}}{{> empty}}{{/if}}',
-      fix: '  - {{{this}}}\n',
-      empty: '  (none)\n'
-    }, options.partials);
+    var sections = {};
+    configureSections(options, sections, _);
+    grunt.verbose.writeflags(sections, 'Sections');
 
     var isDateRange;
 
@@ -65,6 +89,7 @@ module.exports = function (grunt) {
     // Compile and register our templates and partials.
     var template = Handlebars.compile(options.template);
 
+    var partials = sections.partials;
     for (var key in partials) {
       Handlebars.registerPartial(key, Handlebars.compile(partials[key]));
     }
@@ -92,11 +117,19 @@ module.exports = function (grunt) {
 
     // Generate the changelog using the templates defined in options.
     function getChangelog(log) {
+
       var data = {
-        date: moment().format('YYYY-MM-DD'),
-        features: getChanges(log, options.featureRegex),
-        fixes: getChanges(log, options.fixRegex)
+        date: moment().format('YYYY-MM-DD')
       };
+
+      var collectedChanges = {};
+
+      for (var key in sections.regex) {
+        var changes = getChanges(log, sections.regex[key]);
+        collectedChanges[key] = changes;
+      }
+
+      _.extend(data, collectedChanges);
 
       return template(data);
     }
@@ -166,6 +199,8 @@ module.exports = function (grunt) {
       }
 
       var result = grunt.file.read(options.log);
+      // get rid of empty lines in the log
+      result = result.toString().replace(/\n\n/gm, '\n');
       writeChangelog(getChangelog(result));
 
       return;
@@ -211,6 +246,8 @@ module.exports = function (grunt) {
           return done(false);
         }
 
+        // get rid of empty lines in the log
+        result = result.toString().replace(/\n\n/gm, '\n');
         writeChangelog(getChangelog(result));
         done();
       }

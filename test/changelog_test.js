@@ -131,6 +131,15 @@ exports.changelog = {
     test.equal(actual, expected, 'The file header should be added on top of the file.');
 
     test.done();
-  }
+  },
 
+  customSections: function (test) {
+    test.expect(1);
+
+    var actual = grunt.file.read('tmp/changelog_customSections');
+    var expected = grunt.file.read('test/expected/customSections');
+    test.equal(actual, expected, 'The commit messages should have custom sections.');
+
+    test.done();
+  }
 };
