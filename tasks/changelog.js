@@ -52,7 +52,7 @@ module.exports = function (grunt) {
         after = options.after;
     } else {
       // If no after option is provided, default to using the last week.
-      after = moment().subtract('days', 7);
+      after = moment().subtract(7, 'days');
       isDateRange = true;
     }
 
