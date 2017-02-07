@@ -77,6 +77,10 @@ module.exports = function (grunt) {
       var changes = [];
       var match;
 
+      if ( !log.stdout ) {
+        return changes;
+      }
+
       while ((match = regex.exec(log))) {
         var change = '';
 
