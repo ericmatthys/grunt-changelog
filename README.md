@@ -69,15 +69,38 @@ A date string, commit SHA, or tag that the git log will end at. The type must ma
 
 #### options.featureRegex
 Type: `RegEx`
-Default value: `/^(.*)closes #\d+:?(.*)$/gim`
+Default value: `/^(.*)closes #\d+:?(.*)$/i`
 
 The regular expression used to match feature changes.
 
 #### options.fixRegex
 Type: `RegEx`
-Default value: `/^(.*)fixes #\d+:?(.*)$/gim`
+Default value: `/^(.*)fixes #\d+:?(.*)$/i`
 
 The regular expression used to match bug fix changes.
+
+#### options.sections
+Type: `Object`
+Default value: n/a
+
+Here you can define custom sections. Custom sections are simply named regular expressions and they can be used instead of `fixRegex` and `featureRegex`. Matches for each regular expression will be collected in an array that then will be passed to the template using the name of the regular expression, e.g.
+
+```js
+options.sections = {
+  features : /.../i,
+  fixes : /.../i,
+  apichanges : /.../i,
+  ...
+}
+```
+
+In the template you can then refer to `features` or whatever name you define in the sections object. Be sure, however, that you use valid Javascript identifiers only.
+
+#### options.logArguments
+Type: `Array`
+Default value: `['--pretty=format:%s', '--no-merges']`
+
+See <http://git-scm.com/book/en/Git-Basics-Viewing-the-Commit-History>
 
 #### options.log
 Type: `String`
@@ -132,12 +155,6 @@ Type: `String`
 Default value: `'  (none)\n'`
 
 The Handlebars partial used by features or fixes when there are no changes.
-
-#### options.logArguments
-Type: `Array`
-Default value: `['--pretty=format:%s', '--no-merges']`
-
-See <http://git-scm.com/book/en/Git-Basics-Viewing-the-Commit-History>
 
 ### Usage Examples
 
@@ -342,6 +359,75 @@ changelog.txt
 * c0d309b - 2014-08-20: Fix typo in readme. 
 * 7d84867 - 2014-04-11: Bumped to 0.2.2 
 * 2280e9c - 2014-04-07: Optionally prepend or append the changelog.  Fixes #5
+```
+
+#### Custom Sections
+
+In the following example we use custom sections, a custom template and partials for
+formatting our changelog.
+
+```js
+
+function changelogBuildPartial(collectionName, entryName, title) {
+
+    return "{{#if " + collectionName + "}}" + title + ":\n\n" +
+           "{{#each " + collectionName + "}}{{> " + entryName + "}}" +
+           "{{/each}}\n{{/if}}";
+}
+
+grunt.initConfig({
+  changelog: {
+    sample: {
+      options: {
+        logArguments: [
+          '--pretty=%B',
+          '--no-merges'
+        ],
+        template : 'Release v<%= pkg.version %> ({{date}})\n\n{{> features }}{{> fixes }}{{> apichanges }}{{> deprecations }}{{> others }}', 
+        partials: {
+          apichanges: changelogBuildPartial('apichanges', 'entry', 'API Changes'),
+          deprecations: changelogBuildPartial('deprecations', 'entry', 'Deprecated'),
+          features: changelogBuildPartial('features', 'entry', 'New Features'),
+          fixes: changelogBuildPartial('fixes', 'entry', 'Bug Fixes'),
+          entry: ' - {{this}}\n'
+        },
+        sections: {
+          apichanges: /^\s*- changed (#\d+):?(.*)$/gim,
+          deprecations: /^\s*- deprecated (#\d+):?(.*)$/gim,
+          features: /^\s*- feature (#\d+):?(.*)$/gim,
+          fixes: /^\s*- fixes (#\d+):?(.*)$/gim
+        }
+      }
+    }
+  },
+})
+```
+
+changelog.txt
+
+```
+Release v0.1.0 (2015-01-09)
+
+New Features:
+
+ - #2 additional helpers are now available
+
+Bug Fixes:
+
+ - #3 better error handling for undefined paramter
+
+API Changes:
+
+ - #1 new declarative API now in place
+
+Deprecated:
+
+ - #1 doSomething() replaced by doAnotherThing()
+
+Miscellaneous:
+
+ - cleaned up Gruntfile and integrated coffee-coverage
+ - updated readme and provided a simple usage example
 ```
 
 ## Contributing
