@@ -8,6 +8,18 @@
 
 'use strict';
 
+
+/*
+ * Needed by the custom_sections configuration for
+ * building template partials dynamically.
+ */
+function changelogBuildPartial(collectionName, entryName, title) {
+
+    return "{{#if " + collectionName + "}}" + title + ":\n\n" +
+           "{{#each " + collectionName + "}}{{> " + entryName + "}}" +
+           "{{/each}}\n{{/if}}";
+}
+
 module.exports = function (grunt) {
   grunt.initConfig({
     jshint: {
@@ -168,6 +180,27 @@ module.exports = function (grunt) {
           dest: 'tmp/changelog_fileHeader_append',
           insertType: 'append',
           fileHeader: '# Changelog'
+        }
+      },
+
+      custom_sections: {
+        options: {
+          dest: 'tmp/changelog_customSections',
+          log: 'test/fixtures/log_customSections',
+          template : 'Release vX.X.X ([date])\n\n{{> features }}{{> fixes }}{{> apichanges }}{{> deprecations }}',
+          partials: {
+            apichanges: changelogBuildPartial('apichanges', 'entry', 'API Changes'),
+            deprecations: changelogBuildPartial('deprecations', 'entry', 'Deprecated'),
+            features: changelogBuildPartial('features', 'entry', 'New Features'),
+            fixes: changelogBuildPartial('fixes', 'entry', 'Bug Fixes'),
+            entry: ' - {{this}}\n'
+          },
+          sections: {
+            apichanges: /^\s*- changed (#\d+):?(.*)$/gim,
+            deprecations: /^\s*- deprecated (#\d+):?(.*)$/gim,
+            features: /^\s*- feature (#\d+):?(.*)$/gim,
+            fixes: /^\s*- fixes (#\d+):?(.*)$/gim
+          }
         }
       }
     },
