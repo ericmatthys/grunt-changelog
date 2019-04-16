@@ -42,7 +42,8 @@ module.exports = function (grunt) {
     if (options.after) {
 
       if (!semver.valid(options.after)) {
-        after = moment(options.after);
+        // after = moment(options.after);
+        after = moment().subtract(options.after, 'days');
         isDateRange = after.isValid();
       }
 
@@ -52,7 +53,7 @@ module.exports = function (grunt) {
         after = options.after;
     } else {
       // If no after option is provided, default to using the last week.
-      after = moment().subtract('days', 7);
+      after = moment().subtract(7, 'days');
       isDateRange = true;
     }
 
@@ -76,6 +77,10 @@ module.exports = function (grunt) {
     function getChanges(log, regex) {
       var changes = [];
       var match;
+
+      if ( !log.stdout ) {
+        return changes;
+      }
 
       while ((match = regex.exec(log))) {
         var change = '';
