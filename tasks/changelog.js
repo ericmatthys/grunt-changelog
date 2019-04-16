@@ -42,7 +42,8 @@ module.exports = function (grunt) {
     if (options.after) {
 
       if (!semver.valid(options.after)) {
-        after = moment(options.after);
+        // after = moment(options.after);
+        after = moment().subtract(options.after, 'days');
         isDateRange = after.isValid();
       }
 
