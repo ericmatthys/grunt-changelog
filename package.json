@@ -1,18 +1,18 @@
 {
-  "name": "grunt-changelog",
+  "name": "grunt-changelog-more",
   "description": "Generate a changelog based on commit messages.",
-  "version": "0.3.2",
-  "homepage": "https://github.com/ericmatthys/grunt-changelog",
+  "version": "0.4.0",
+  "homepage": "https://github.com/chevybowtie/grunt-changelog",
   "author": {
-    "name": "Eric Matthys",
-    "email": "ericmatthys@gmail.com"
+    "name": "Paul Sturm",
+    "email": "paul.sturm@cotton-software.com"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/ericmatthys/grunt-changelog.git"
+    "url": "git://github.com/chevybowtie/grunt-changelog.git"
   },
   "bugs": {
-    "url": "https://github.com/ericmatthys/grunt-changelog/issues"
+    "url": "https://github.com/chevybowtie/grunt-changelog/issues"
   },
   "license": "MIT",
   "scripts": {

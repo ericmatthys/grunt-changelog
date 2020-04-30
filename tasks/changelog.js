@@ -4,6 +4,13 @@
 *
 * Copyright (c) 2013 Eric Matthys
 * Licensed under the MIT license.
+*
+* Forked 04/29/2020 2020 Paul Sturm
+*   added new log extractions:
+*   * projects        - major milestones based on projects
+*   * UI              - user interface only changes
+*   * configuration   - changes made that only affect the startup configuration values of the app
+*
 */
 
 'use strict';
@@ -17,10 +24,20 @@ module.exports = function (grunt) {
   grunt.registerMultiTask('changelog', 'Generate a changelog based on commit messages.', function (after, before) {
     // Merge task-specific and/or target-specific options with these defaults.
     var options = this.options({
-      featureRegex: /^(.*)closes #\d+:?(.*)$/gim,
-      fixRegex: /^(.*)fixes #\d+:?(.*)$/gim,
+
+      // commit messages: "feature:"
+      featureRegex: /^(.*) feature: (.*)$/gim,
+      // commit messages: "fix:"
+      fixRegex: /^(.*) fix: (.*)$/gim,
+      // commit messages: "project:"
+      projectRegex: /^(.*) project: (.*)$/gim,
+      // commit messages: "UI:"
+      uiRegex: /^(.*) UI: (.*)$/gim,
+      // commit messages: "config:"
+      configRegex: /^(.*) config: (.*)$/gim,
+
       dest: 'changelog.txt',
-      template: '{{> features}}{{> fixes}}',
+      template: '{{> projects}}{{> features}}{{> fixes}}{{> UIs}}{{> configs}}',
       after: after,
       before: before
     });
@@ -28,11 +45,22 @@ module.exports = function (grunt) {
     // Extend partials separately so only one custom partial can be specified
     // without having to provide every single partial.
     var partials = _.extend({
-      features: 'NEW:\n\n{{#if features}}{{#each features}}{{> feature}}{{/each}}{{else}}{{> empty}}{{/if}}\n',
+      features: 'New features:\n\n{{#if features}}{{#each features}}{{> feature}}{{/each}}{{else}}{{> empty}}{{/if}}\n',
       feature: '  - {{{this}}}\n',
-      fixes: 'FIXES:\n\n{{#if fixes}}{{#each fixes}}{{> fix}}{{/each}}{{else}}{{> empty}}{{/if}}',
+
+      fixes: 'Bug Fixes:\n\n{{#if fixes}}{{#each fixes}}{{> fix}}{{/each}}{{else}}{{> empty}}{{/if}}\n',
       fix: '  - {{{this}}}\n',
-      empty: '  (none)\n'
+
+      projects: 'Projects:\n\n{{#if projects}}{{#each projects}}{{> project}}{{/each}}{{else}}{{> empty}}{{/if}}\n',
+      project: '  - {{{this}}}\n',
+
+      UIs: 'User interface changes:\n\n{{#if UIs}}{{#each UIs}}{{> ui}}{{/each}}{{else}}{{> empty}}{{/if}}\n',
+      ui: '  - {{{this}}}\n',
+
+      configs: 'Application configuration changes:\n\n{{#if configs}}{{#each configs}}{{> config}}{{/each}}{{else}}{{> empty}}{{/if}}\n',
+      config: '  - {{{this}}}\n',
+
+      empty: '  (none)\n\n'
     }, options.partials);
 
     var isDateRange;
@@ -52,7 +80,7 @@ module.exports = function (grunt) {
         after = options.after;
     } else {
       // If no after option is provided, default to using the last week.
-      after = moment().subtract('days', 7);
+      after = moment().subtract(21, 'days');
       isDateRange = true;
     }
 
@@ -95,7 +123,10 @@ module.exports = function (grunt) {
       var data = {
         date: moment().format('YYYY-MM-DD'),
         features: getChanges(log, options.featureRegex),
-        fixes: getChanges(log, options.fixRegex)
+        fixes: getChanges(log, options.fixRegex),
+        projects: getChanges(log, options.projectRegex),
+        UIs: getChanges(log, options.uiRegex),
+        configs: getChanges(log, options.configRegex)
       };
 
       return template(data);
